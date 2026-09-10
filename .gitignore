@@ -22,3 +22,6 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Local config files
+bootstrap/ai-harness-config

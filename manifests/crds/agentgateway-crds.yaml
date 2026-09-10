@@ -6,19 +6,19 @@ metadata:
 spec:
   project: default
 
+  source:
+    repoURL: cr.agentgateway.dev/charts
+    chart: agentgateway-crds
+    targetRevision: v1.5.0
+
   destination:
     server: https://kubernetes.default.svc
     namespace: agentgateway-system
 
-  source:
-    repoURL: cr.agentgateway.dev
-    chart: agentgateway-crds
-    targetRevision: v1.5.0
-    helm:
-      parameters:
-        - name: controller.image.pullPolicy
-          value: Always
-
   syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
