@@ -31,7 +31,7 @@ variable "argocd_chart_version" {
 variable "git_repo_url" {
   type        = string
   description = "The URL of the Git repository containing the manifests"
-  default     = "https://github.com/replace-me/ai-harness.git"
+  default     = "https://github.com/silhouetteUA/ai-harness.git"
 }
 
 variable "git_target_revision" {
