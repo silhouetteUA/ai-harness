@@ -14,6 +14,8 @@ resource "kubectl_manifest" "argocd_root_app" {
         repoURL: ${var.git_repo_url}
         targetRevision: ${var.git_target_revision}
         path: ${var.git_path}
+        directory:
+          recurse: true
       destination:
         server: https://kubernetes.default.svc
         namespace: default

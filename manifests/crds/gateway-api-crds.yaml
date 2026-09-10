@@ -8,7 +8,7 @@ spec:
 
   source:
     repoURL: https://github.com/kubernetes-sigs/gateway-api.git
-    targetRevision: main
+    targetRevision: v1.6.2
     path: config/crd/experimental
     kustomize: {}
 
