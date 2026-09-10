@@ -21,3 +21,12 @@ spec:
       selfHeal: true
     syncOptions:
       - ServerSideApply=true
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: ValidatingAdmissionPolicy
+      jsonPointers:
+        - /spec
+    - group: admissionregistration.k8s.io
+      kind: ValidatingAdmissionPolicyBinding
+      jsonPointers:
+        - /spec

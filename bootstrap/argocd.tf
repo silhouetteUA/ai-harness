@@ -26,6 +26,10 @@ resource "helm_release" "argocd" {
     {
       name  = "applicationSet.enabled"
       value = "false"
+    },
+    {
+      name  = "configs.cm.application.resourceTrackingMethod"
+      value = "annotation"
     }
   ]
 }
