@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kagent
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/kagent-dev/kagent/helm
+    targetRevision: 0.10.1
+    chart: kagent
+    helm:
+      values: |
+        tag: "0.10.1"
+        controller:
+          image:
+            tag: "0.10.1"
+        ui:
+          image:
+            tag: "0.10.1"
+        istio-agent:
+          enabled: false
+        cilium-policy-agent:
+          enabled: false
+        cilium-manager-agent:
+          enabled: false
+        cilium-debug-agent:
+          enabled: false
+        providers:
+          default: openAI
+          openAI:
+            apiKey: OPENAI_API_KEY
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kagent
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

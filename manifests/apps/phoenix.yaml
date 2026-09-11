@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: phoenix
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: registry-1.docker.io/arizephoenix
+    targetRevision: 12.0.10
+    chart: phoenix-helm
+    helm:
+      values: |
+        ingress:
+          enabled: false
+        healthChecks:
+          startupProbe:
+            enabled: true
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 120
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: phoenix
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
