@@ -22,8 +22,9 @@ deploy: check_prerequisites
 	@echo "[`date '+%H:%M:%S'`] OpenTofu deployment finished ..."
 
 destroy:
-	@echo "Destroying the OpenTofu infrastructure ..."
+	@echo "[`date '+%H:%M:%S'`] Destroy started ..."
 	@cd bootstrap && tofu destroy -auto-approve
+	@echo "[`date '+%H:%M:%S'`] Destroy finished ..."
 
 cluster_deploy:
 	@./scripts/createKind.sh
