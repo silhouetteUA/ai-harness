@@ -8,8 +8,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: ghcr.io/kgateway-dev/charts
-    targetRevision: 2.2.1
+    repoURL: cr.agentgateway.dev/charts
+    targetRevision: v1.5.0
     chart: agentgateway
   destination:
     server: https://kubernetes.default.svc
