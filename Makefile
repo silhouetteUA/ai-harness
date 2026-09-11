@@ -13,11 +13,13 @@ help:
 install_prerequisites: tofu_deploy cluster_deploy
 
 deploy: check_prerequisites
+	@echo "[`date '+%H:%M:%S'`] Deployment started ..."
 	@echo "Prerequisites met."
 	@kind --version
 	@tofu --version
-	@echo "Proceeding with the deployment ..."
+	@echo "[`date '+%H:%M:%S'`] OpenTofu deployment started ..."
 	@cd bootstrap && tofu init && tofu validate && tofu apply -auto-approve
+	@echo "[`date '+%H:%M:%S'`] OpenTofu deployment finished ..."
 
 destroy:
 	@echo "Destroying the OpenTofu infrastructure ..."

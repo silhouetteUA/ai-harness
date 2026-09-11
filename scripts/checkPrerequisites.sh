@@ -1,6 +1,8 @@
 #!/bin/bash
 
-echo "Checking prerequisites..."
+log() { echo "[$(date '+%H:%M:%S')] $*"; }
+
+log "Checking prerequisites..."
 
 missing_tools=()
 installed_tools=()
@@ -21,22 +23,22 @@ fi
 
 # Output installed tools
 if [ ${#installed_tools[@]} -gt 0 ]; then
-    echo "Installed tools:"
+    log "Installed tools:"
     for tool in "${installed_tools[@]}"; do
-        echo "  - $tool"
+        log "  - $tool"
     done
 fi
 
 # Output missing tools
 if [ ${#missing_tools[@]} -gt 0 ]; then
-    echo "Missing tools:"
+    log "Missing tools:"
     for tool in "${missing_tools[@]}"; do
-        echo "  - $tool"
+        log "  - $tool"
     done
     echo ""
-    echo "Please run 'make install_prerequisites' to install them."
+    log "Please run 'make install_prerequisites' to install them."
     exit 1
 fi
 
-echo "All required tools are installed."
+log "All required tools are installed."
 exit 0

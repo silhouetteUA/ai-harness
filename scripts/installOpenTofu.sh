@@ -1,7 +1,9 @@
 #!/bin/bash
 
+log() { echo "[$(date '+%H:%M:%S')] $*"; }
+
 if ! command -v tofu >/dev/null 2>&1; then
-    echo "OpenTofu is not installed. Installing..."
+    log "OpenTofu is not installed. Starting to install OpenTofu..."
     curl -fsSL https://get.opentofu.org/install-opentofu.sh | sh -s -- --install-method standalone
-    echo "OpenTofu installation complete."
+    log "OpenTofu installation finished successfully."
 fi
