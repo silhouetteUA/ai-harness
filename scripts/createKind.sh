@@ -19,4 +19,6 @@ if ! command -v kind >/dev/null 2>&1; then
     sudo install -m 0755 /tmp/kind /usr/local/bin/kind
     rm -f /tmp/kind
     log "kind installation finished successfully."
+else
+    log "kind is already installed."
 fi
