@@ -21,6 +21,8 @@ spec:
   parentRefs:
   - name: agentgateway-external
     namespace: agentgateway-system
+  hostnames:
+  - "kagent.localhost"
   rules:
   - matches:
     - path:

@@ -21,11 +21,13 @@ spec:
   parentRefs:
   - name: agentgateway-external
     namespace: agentgateway-system
+  hostnames:
+  - "qdrant.localhost"
   rules:
   - matches:
     - path:
         type: PathPrefix
-        value: /qdrant
+        value: /
     filters:
     - type: URLRewrite
       urlRewrite:
