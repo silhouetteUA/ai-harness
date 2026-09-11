@@ -33,6 +33,8 @@ if [ ${#missing_tools[@]} -gt 0 ]; then
     for tool in "${missing_tools[@]}"; do
         echo "  - $tool"
     done
+    echo ""
+    echo "Please run 'make install_prerequisites' to install them."
     exit 1
 fi
 
