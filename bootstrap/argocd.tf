@@ -30,6 +30,10 @@ resource "helm_release" "argocd" {
     {
       name  = "configs.cm.application.resourceTrackingMethod"
       value = "annotation"
+    },
+    {
+      name  = "server.extraArgs[0]"
+      value = "--insecure"
     }
   ]
 }
