@@ -14,7 +14,7 @@
 | **Qdrant 1.19.1** | Vector database for retrieval |
 | **Arize Phoenix 12.0.10** | LLM observability — tracing, evals, prompt playground |
 | **Argo CD** | GitOps operator — keeps the cluster in sync with definitions |
-| **KinD** | Local Kubernetes (1 control-plane) running v1.31.0 |
+| **KinD** | Local Kubernetes (1 control-plane) running v1.37.0 |
 
 ## Quickstart
 
@@ -40,7 +40,7 @@ make destroy
 ```
 make deploy
   → tofu apply (bootstrap/)
-      → KinD cluster (v1.31.0)
+      → KinD cluster (v1.37.0)
       → Argo CD (Helm)
       → root-crds (Argo CD Application pointing to manifests/crds/)
       → root-apps (Argo CD Application pointing to manifests/apps/)

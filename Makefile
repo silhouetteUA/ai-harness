@@ -12,11 +12,16 @@ help:
 
 install_prerequisites: tofu_deploy cluster_deploy
 
+CLUSTER_NAME := $(shell awk '/^name:/ {print $$2}' bootstrap/kind-config.yaml)
+CLUSTER_NAME := $(if $(CLUSTER_NAME),$(CLUSTER_NAME),kind)
+
 deploy: check_prerequisites
 	@echo "[`date '+%H:%M:%S'`] Deployment started ..."
 	@echo "Prerequisites met."
 	@kind --version
 	@tofu --version
+	@echo "[`date '+%H:%M:%S'`] Creating kind cluster ..."
+	@kind get clusters | grep -q "^$(CLUSTER_NAME)$$" || kind create cluster --config bootstrap/kind-config.yaml
 	@echo "[`date '+%H:%M:%S'`] OpenTofu deployment started ..."
 	@cd bootstrap && tofu init && tofu validate && tofu apply -auto-approve
 	@echo "[`date '+%H:%M:%S'`] OpenTofu deployment finished ..."
@@ -24,6 +29,8 @@ deploy: check_prerequisites
 destroy:
 	@echo "[`date '+%H:%M:%S'`] Destroy started ..."
 	@cd bootstrap && tofu destroy -auto-approve
+	@echo "[`date '+%H:%M:%S'`] Deleting kind cluster ..."
+	@kind delete cluster --name $(CLUSTER_NAME)
 	@echo "[`date '+%H:%M:%S'`] Destroy finished ..."
 
 cluster_deploy:

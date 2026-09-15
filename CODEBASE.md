@@ -14,7 +14,7 @@ ai-harness is a **local AI infrastructure sandbox**. A single `make deploy` prov
 
 | Layer | Tech | Version |
 |---|---|---|
-| Cluster | KinD | v1.31.0 |
+| Cluster | KinD | v1.37.0 |
 | GitOps operator | Argo CD | latest (Helm) |
 | Infrastructure as code | OpenTofu | v1.8+ |
 | AI gateway | agentgateway | v1.5.0 |
@@ -35,7 +35,7 @@ A single `make deploy` produces a running cluster:
 ```
 make deploy
   → tofu apply (bootstrap/)
-      → KinD cluster (using kindest/node:v1.31.0 for ValidatingAdmissionPolicy support)
+      → KinD cluster (using kindest/node:v1.37.0 for ValidatingAdmissionPolicy support)
       → helm_release.argocd
       → kubectl_manifest.root_crds (depends_on ArgoCD)
       → kubectl_manifest.root_apps (depends_on root_crds)
@@ -114,7 +114,7 @@ GEMINI.md            Project rules for AI agents
 |---|---|
 | Raw Custom Resources in `manifests/apps/` or `manifests/crds/` | Causes Argo CD dry-run validation to fail on sync because CRDs do not exist yet. |
 | Omission of `ServerSideApply=true` on CRD Applications | Large CRDs will fail to apply due to the 256KB `kubectl.kubernetes.io/last-applied-configuration` limit. |
-| KinD nodes < v1.30.0 | Gateway API strictly requires `ValidatingAdmissionPolicy/v1` which is only fully supported in v1.30+. We use v1.31.0. |
+| KinD nodes < v1.30.0 | Gateway API strictly requires `ValidatingAdmissionPolicy/v1` which is only fully supported in v1.30+. We use v1.37.0. |
 | Gateway API Experimental Channel | The `xbackends` CRD contains an alpha CEL rule (`format.dns1123Label`) that crashes cluster upgrades/syncs. Stick to the standard channel. |
 
 ---

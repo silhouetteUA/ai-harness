@@ -1,11 +1,7 @@
 terraform {
-  required_version = ">= 1.5.0" # Compatible with OpenTofu
+  required_version = ">= 1.5.0"
 
   required_providers {
-    kind = {
-      source  = "tehcyx/kind"
-      version = "~> 0.4.0"
-    }
     helm = {
       source  = "hashicorp/helm"
       version = ">= 3.0"
@@ -21,28 +17,20 @@ terraform {
   }
 }
 
-provider "kind" {}
-
 provider "helm" {
   kubernetes = {
-    host                   = kind_cluster.this.endpoint
-    client_certificate     = kind_cluster.this.client_certificate
-    client_key             = kind_cluster.this.client_key
-    cluster_ca_certificate = kind_cluster.this.cluster_ca_certificate
+    config_path    = "~/.kube/config"
+    config_context = "kind-ai-harness"
   }
 }
 
 provider "kubernetes" {
-  host                   = kind_cluster.this.endpoint
-  client_certificate     = kind_cluster.this.client_certificate
-  client_key             = kind_cluster.this.client_key
-  cluster_ca_certificate = kind_cluster.this.cluster_ca_certificate
+  config_path    = "~/.kube/config"
+  config_context = "kind-ai-harness"
 }
 
 provider "kubectl" {
-  host                   = kind_cluster.this.endpoint
-  client_certificate     = kind_cluster.this.client_certificate
-  client_key             = kind_cluster.this.client_key
-  cluster_ca_certificate = kind_cluster.this.cluster_ca_certificate
-  load_config_file       = false
+  config_path      = "~/.kube/config"
+  config_context   = "kind-ai-harness"
+  load_config_file = true
 }

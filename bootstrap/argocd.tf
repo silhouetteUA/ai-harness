@@ -7,7 +7,6 @@ resource "helm_release" "argocd" {
   create_namespace = true
 
   # This ensures we don't try to install ArgoCD until the kind cluster is fully up
-  depends_on = [kind_cluster.this]
 
   # Service + get rid of excessive controllers to improve MEM footprint
   set = [
