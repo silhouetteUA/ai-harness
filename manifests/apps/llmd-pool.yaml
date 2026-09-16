@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: llmd-pool
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: registry.k8s.io/gateway-api-inference-extension/charts
+    targetRevision: v1.5.0
+    chart: inferencepool
+    helm:
+      values: |
+        provider:
+          name: none
+        inferenceExtension:
+          apiVersion: inference.networking.k8s.io/v1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          monitoring:
+            prometheus:
+              enabled: false
+            gke:
+              enabled: false
+        inferencePool:
+          name: llm-d-pool
+          apiVersion: inference.networking.k8s.io/v1
+          targetPortNumber: 8000
+          modelServers:
+            matchLabels:
+              llm-d.ai/model: nomic-embed-text-v1-5
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: llm-d
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,93 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: llmd
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://llm-d-incubation.github.io/llm-d-modelservice/
+    targetRevision: v0.3.17
+    chart: llm-d-modelservice
+    helm:
+      values: |
+        accelerator:
+          type: cpu
+        modelArtifacts:
+          name: nomic-ai/nomic-embed-text-v1.5
+          uri: oci://ghcr.io/den-vasyliev/abox/nomic-embed:v1.18.1-4ccc0ff
+          mountPath: /model-cache
+          labels:
+            llm-d.ai/inferenceServing: "true"
+            llm-d.ai/model: nomic-embed-text-v1-5
+        prefill:
+          create: false
+        decode:
+          create: true
+          replicas: 1
+          monitoring:
+            podmonitor:
+              enabled: false
+          containers:
+            - name: llama-cpp
+              modelCommand: custom
+              image: ghcr.io/ggml-org/llama.cpp:server-b10920
+              imagePullPolicy: IfNotPresent
+              mountModelVolume: true
+              command: ["/app/llama-server"]
+              args:
+                - --host
+                - 0.0.0.0
+                - --port
+                - "8000"
+                - --embeddings
+                - --metrics
+                - --ctx-size
+                - "16384"
+                - --ubatch-size
+                - "2048"
+                - --parallel
+                - "8"
+                - --model
+                - /model-cache/models/model.gguf
+              ports:
+                - containerPort: 8000
+                  name: metrics
+              readinessProbe:
+                httpGet:
+                  path: /health
+                  port: 8000
+                initialDelaySeconds: 10
+                periodSeconds: 10
+                timeoutSeconds: 5
+                failureThreshold: 3
+              livenessProbe:
+                httpGet:
+                  path: /health
+                  port: 8000
+                initialDelaySeconds: 30
+                periodSeconds: 30
+                timeoutSeconds: 10
+                failureThreshold: 3
+              resources:
+                requests:
+                  cpu: 250m
+                  memory: 256Mi
+                limits:
+                  cpu: "2"
+                  memory: 1Gi
+        routing:
+          servicePort: 8000
+          proxy:
+            enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: llm-d
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
