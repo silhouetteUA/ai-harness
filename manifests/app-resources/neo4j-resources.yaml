@@ -1,0 +1,19 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: neo4j
+  namespace: neo4j
+spec:
+  parentRefs:
+    - name: agentgateway-external
+      namespace: agentgateway-system
+  hostnames:
+    - neo4j.localhost
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: neo4j
+          port: 7474
