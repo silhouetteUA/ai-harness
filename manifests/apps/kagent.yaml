@@ -28,6 +28,14 @@ spec:
           enabled: false
         cilium-debug-agent:
           enabled: false
+        helm-agent:
+          enabled: false
+        kgateway-agent:
+          enabled: false
+        observability-agent:
+          enabled: false
+        promql-agent:
+          enabled: false
         providers:
           default: openAI
           openAI:
