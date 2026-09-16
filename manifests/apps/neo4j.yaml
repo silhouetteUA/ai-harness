@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: neo4j
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://helm.neo4j.com/neo4j
+    targetRevision: 2026.7.1
+    chart: neo4j
+    helm:
+      values: |
+        disableLookups: true
+        neo4j:
+          name: neo4j
+          edition: community
+          password: "abox-neo4j"
+          resources:
+            cpu: "500m"
+            memory: "2Gi"
+        volumes:
+          data:
+            mode: defaultStorageClass
+            defaultStorageClass:
+              accessModes:
+                - ReadWriteOnce
+              requests:
+                storage: 5Gi
+        env:
+          NEO4J_PLUGINS: '["apoc"]'
+        config:
+          dbms.security.procedures.unrestricted: "apoc.*"
+          dbms.security.procedures.allowlist: "apoc.*"
+        services:
+          neo4j:
+            enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: neo4j
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
