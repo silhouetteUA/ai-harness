@@ -147,17 +147,13 @@ spec:
       kind: Gateway
       name: agentgateway-external
       namespace: agentgateway-system
+  hostnames:
+    - llamacpp.localhost
   rules:
     - matches:
         - path:
             type: PathPrefix
-            value: /llamacpp
-      filters:
-        - type: URLRewrite
-          urlRewrite:
-            path:
-              type: ReplacePrefixMatch
-              replacePrefixMatch: /
+            value: /
       backendRefs:
         - name: llama-cpp-embeddings
           port: 8090

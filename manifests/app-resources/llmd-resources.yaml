@@ -83,32 +83,20 @@ spec:
       kind: Gateway
       name: agentgateway-external
       namespace: agentgateway-system
+  hostnames:
+    - llmd.localhost
   rules:
     - matches:
         - path:
             type: PathPrefix
-            value: /llmd/v1/embeddings
-      filters:
-        # Both backends serve OpenAI-compatible /v1/embeddings, so they can only
-        # share one Gateway listener if the prefix is stripped before the hop.
-        - type: URLRewrite
-          urlRewrite:
-            path:
-              type: ReplacePrefixMatch
-              replacePrefixMatch: /v1/embeddings
+            value: /v1/embeddings
       backendRefs:
         - name: llm-d-embedding
           port: 8000
     - matches:
         - path:
             type: PathPrefix
-            value: /llmd
-      filters:
-        - type: URLRewrite
-          urlRewrite:
-            path:
-              type: ReplacePrefixMatch
-              replacePrefixMatch: /
+            value: /
       backendRefs:
         - group: inference.networking.k8s.io
           kind: InferencePool
