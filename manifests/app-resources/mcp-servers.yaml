@@ -31,7 +31,7 @@ spec:
 apiVersion: kagent.dev/v1alpha1
 kind: MCPServer
 metadata:
-  name: qdrant-mcp
+  name: qdrant-mcp-custom
   namespace: kagent
 spec:
   transportType: stdio
@@ -75,3 +75,29 @@ spec:
       limits:
         cpu: 500m
         memory: 256Mi
+
+---
+apiVersion: kagent.dev/v1alpha1
+kind: MCPServer
+metadata:
+  name: qdrant-mcp-official
+  namespace: kagent
+spec:
+  transportType: stdio
+  stdioTransport: {}
+  deployment:
+    image: qdrant/mcp-server-qdrant:latest
+    cmd: uvx
+    args: ["mcp-server-qdrant"]
+    env:
+      QDRANT_URL: http://qdrant.qdrant:6333
+      COLLECTION_NAME: official-minilm
+      # The official MCP uses fastembed in-process with all-MiniLM-L6-v2 by default.
+      # We don't need to specify EMBEDDING_MODEL if we want the default.
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 1000m
+        memory: 512Mi
