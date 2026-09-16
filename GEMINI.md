@@ -8,3 +8,8 @@
 ## 2. Argo CD Large CRD Limitations
 * **Rule:** Always add `ServerSideApply=true` to the `syncOptions` of any Argo CD Application that deploys CRDs.
 * **Rationale:** Many modern CRDs frequently exceed the 256KB size limit of the `kubectl.kubernetes.io/last-applied-configuration` annotation used by Argo CD's default client-side apply. Server-Side Apply natively bypasses this limit.
+
+## 3. Shell Execution Environment
+* **Rule:** Whenever executing a shell command on the host (especially Make commands or tools installed via Homebrew), wrap the command in a login shell using `zsh -lc "<command>"`.
+* **Note:** This is specifically required when the user asks to run a command remotely (e.g., from their cell phone using the Antigravity remote control).
+* **Rationale:** The background agent process does not inherit the user's interactive shell `$PATH` (like `/opt/homebrew/bin/`). Using `zsh -lc` forces the shell to load `.zprofile` and `.zshrc` so all tools are available.
