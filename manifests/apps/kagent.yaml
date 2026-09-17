@@ -52,3 +52,9 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+  ignoreDifferences:
+  - group: ""
+    kind: Secret
+    name: kagent-gemini
+    jsonPointers:
+    - /data/GOOGLE_API_KEY
