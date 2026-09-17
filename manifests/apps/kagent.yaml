@@ -41,7 +41,6 @@ spec:
         providers:
           default: gemini
           gemini:
-            apiKey: GEMINI_API_KEY
             model: gemini-2.5-flash
   destination:
     server: https://kubernetes.default.svc
