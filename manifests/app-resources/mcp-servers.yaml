@@ -86,7 +86,7 @@ spec:
   transportType: stdio
   stdioTransport: {}
   deployment:
-    image: qdrant/mcp-server-qdrant:latest
+    image: ghcr.io/astral-sh/uv:python3.12-bookworm-slim
     cmd: uvx
     args: ["mcp-server-qdrant"]
     env:
