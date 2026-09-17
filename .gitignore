@@ -25,3 +25,7 @@ terraform.rc
 
 # Local config files
 bootstrap/ai-harness-config
+
+# Environment files
+.env
+.env*.local
