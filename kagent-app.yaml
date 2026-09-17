@@ -1,0 +1,544 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"argoproj.io/v1alpha1","kind":"Application","metadata":{"annotations":{},"finalizers":["resources-finalizer.argocd.argoproj.io"],"labels":{"argocd.argoproj.io/instance":"root-apps"},"name":"kagent","namespace":"argocd"},"spec":{"destination":{"namespace":"kagent","server":"https://kubernetes.default.svc"},"ignoreDifferences":[{"group":"kagent.dev","jsonPointers":["/spec/declarative/modelConfig"],"kind":"Agent","name":"k8s-agent"}],"project":"default","source":{"chart":"kagent","helm":{"values":"tag: \"0.10.1\"\ncontroller:\n  image:\n    tag: \"0.10.1\"\nui:\n  image:\n    tag: \"0.10.1\"\nistio-agent:\n  enabled: false\ncilium-policy-agent:\n  enabled: false\ncilium-manager-agent:\n  enabled: false\ncilium-debug-agent:\n  enabled: false\nhelm-agent:\n  enabled: false\nkgateway-agent:\n  enabled: false\nobservability-agent:\n  enabled: false\npromql-agent:\n  enabled: false\nargo-rollouts-agent:\n  enabled: false\nproviders:\n  default: gemini\n  gemini:\n    apiKey: GEMINI_API_KEY
+    model: gemini-2.5-flash\n"},"repoURL":"ghcr.io/kagent-dev/kagent/helm","targetRevision":"0.10.1"},"syncPolicy":{"automated":{"prune":true,"selfHeal":true},"syncOptions":["CreateNamespace=true"]}}}
+  creationTimestamp: "2026-09-16T14:33:04Z"
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  generation: 2281
+  labels:
+    argocd.argoproj.io/instance: root-apps
+  name: kagent
+  namespace: argocd
+  resourceVersion: "140636"
+  uid: c69e5547-1d9c-498f-8815-bd0859f2c662
+spec:
+  destination:
+    namespace: kagent
+    server: https://kubernetes.default.svc
+  ignoreDifferences:
+  - group: kagent.dev
+    jsonPointers:
+    - /spec/declarative/modelConfig
+    kind: Agent
+    name: k8s-agent
+  project: default
+  source:
+    chart: kagent
+    helm:
+      values: |
+        tag: "0.10.1"
+        controller:
+          image:
+            tag: "0.10.1"
+        ui:
+          image:
+            tag: "0.10.1"
+        istio-agent:
+          enabled: false
+        cilium-policy-agent:
+          enabled: false
+        cilium-manager-agent:
+          enabled: false
+        cilium-debug-agent:
+          enabled: false
+        helm-agent:
+          enabled: false
+        kgateway-agent:
+          enabled: false
+        observability-agent:
+          enabled: false
+        promql-agent:
+          enabled: false
+        argo-rollouts-agent:
+          enabled: false
+        providers:
+          default: gemini
+          gemini:
+            apiKey: GEMINI_API_KEY
+    model: gemini-2.5-flash
+    repoURL: ghcr.io/kagent-dev/kagent/helm
+    targetRevision: 0.10.1
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+status:
+  controllerNamespace: argocd
+  health:
+    status: Progressing
+  history:
+  - deployStartedAt: "2026-09-16T14:33:05Z"
+    deployedAt: "2026-09-16T14:33:15Z"
+    id: 0
+    revision: 0.10.1
+    source:
+      chart: kagent
+      helm:
+        values: |
+          tag: "0.10.1"
+          controller:
+            image:
+              tag: "0.10.1"
+          ui:
+            image:
+              tag: "0.10.1"
+          istio-agent:
+            enabled: false
+          cilium-policy-agent:
+            enabled: false
+          cilium-manager-agent:
+            enabled: false
+          cilium-debug-agent:
+            enabled: false
+          helm-agent:
+            enabled: false
+          kgateway-agent:
+            enabled: false
+          observability-agent:
+            enabled: false
+          promql-agent:
+            enabled: false
+          providers:
+            default: gemini
+            gemini:
+              apiKey: GEMINI_API_KEY
+    model: gemini-2.5-flash
+      repoURL: ghcr.io/kagent-dev/kagent/helm
+      targetRevision: 0.10.1
+  - deployStartedAt: "2026-09-16T14:56:48Z"
+    deployedAt: "2026-09-16T14:56:48Z"
+    id: 1
+    revision: 0.10.1
+    source:
+      chart: kagent
+      helm:
+        values: |
+          tag: "0.10.1"
+          controller:
+            image:
+              tag: "0.10.1"
+          ui:
+            image:
+              tag: "0.10.1"
+          istio-agent:
+            enabled: false
+          cilium-policy-agent:
+            enabled: false
+          cilium-manager-agent:
+            enabled: false
+          cilium-debug-agent:
+            enabled: false
+          helm-agent:
+            enabled: false
+          kgateway-agent:
+            enabled: false
+          observability-agent:
+            enabled: false
+          promql-agent:
+            enabled: false
+          argo-rollouts-agent:
+            enabled: false
+          providers:
+            default: gemini
+            gemini:
+              apiKey: GEMINI_API_KEY
+    model: gemini-2.5-flash
+      repoURL: ghcr.io/kagent-dev/kagent/helm
+      targetRevision: 0.10.1
+  operationState:
+    finishedAt: "2026-09-17T17:16:43Z"
+    message: successfully synced (all tasks run)
+    operation:
+      initiatedBy:
+        automated: true
+      retry:
+        limit: 5
+      sync:
+        prune: true
+        resources:
+        - group: kagent.dev
+          kind: Agent
+          name: k8s-agent
+        revision: 0.10.1
+        syncOptions:
+        - CreateNamespace=true
+    phase: Succeeded
+    startedAt: "2026-09-17T17:16:42Z"
+    syncResult:
+      resources:
+      - group: kagent.dev
+        hookPhase: Running
+        kind: Agent
+        message: 'agent.kagent.dev/k8s-agent configured. Warning: Detected changes
+          to resource k8s-agent which is currently being deleted.'
+        name: k8s-agent
+        namespace: kagent
+        status: Synced
+        syncPhase: Sync
+        version: v1alpha2
+      revision: 0.10.1
+      source:
+        chart: kagent
+        helm:
+          values: |
+            tag: "0.10.1"
+            controller:
+              image:
+                tag: "0.10.1"
+            ui:
+              image:
+                tag: "0.10.1"
+            istio-agent:
+              enabled: false
+            cilium-policy-agent:
+              enabled: false
+            cilium-manager-agent:
+              enabled: false
+            cilium-debug-agent:
+              enabled: false
+            helm-agent:
+              enabled: false
+            kgateway-agent:
+              enabled: false
+            observability-agent:
+              enabled: false
+            promql-agent:
+              enabled: false
+            argo-rollouts-agent:
+              enabled: false
+            providers:
+              default: gemini
+              gemini:
+                apiKey: GEMINI_API_KEY
+    model: gemini-2.5-flash
+        repoURL: ghcr.io/kagent-dev/kagent/helm
+        targetRevision: 0.10.1
+  reconciledAt: "2026-09-17T17:16:43Z"
+  resources:
+  - kind: ConfigMap
+    name: kagent-builtin-prompts
+    namespace: kagent
+    status: Synced
+    version: v1
+  - kind: ConfigMap
+    name: kagent-controller
+    namespace: kagent
+    status: Synced
+    version: v1
+  - kind: ConfigMap
+    name: kagent-grafana-mcp
+    namespace: kagent
+    status: Synced
+    version: v1
+  - kind: ConfigMap
+    name: kagent-ui-config
+    namespace: kagent
+    status: Synced
+    version: v1
+  - health:
+      status: Healthy
+    kind: PersistentVolumeClaim
+    name: kagent-postgresql
+    namespace: kagent
+    status: Synced
+    version: v1
+  - kind: Secret
+    name: kagent-grafana-mcp
+    namespace: kagent
+    status: Synced
+    version: v1
+  - kind: Secret
+    name: kagent-openai
+    namespace: kagent
+    status: Synced
+    version: v1
+  - kind: Secret
+    name: kagent-postgresql
+    namespace: kagent
+    status: Synced
+    version: v1
+  - health:
+      status: Healthy
+    kind: Service
+    name: kagent-controller
+    namespace: kagent
+    status: Synced
+    version: v1
+  - health:
+      status: Healthy
+    kind: Service
+    name: kagent-grafana-mcp
+    namespace: kagent
+    status: Synced
+    version: v1
+  - health:
+      status: Healthy
+    kind: Service
+    name: kagent-kmcp-controller-manager-metrics-service
+    namespace: kagent
+    status: Synced
+    version: v1
+  - health:
+      status: Healthy
+    kind: Service
+    name: kagent-postgresql
+    namespace: kagent
+    status: Synced
+    version: v1
+  - health:
+      status: Healthy
+    kind: Service
+    name: kagent-tools
+    namespace: kagent
+    status: Synced
+    version: v1
+  - health:
+      status: Healthy
+    kind: Service
+    name: kagent-tools-metrics
+    namespace: kagent
+    status: Synced
+    version: v1
+  - health:
+      status: Healthy
+    kind: Service
+    name: kagent-ui
+    namespace: kagent
+    status: Synced
+    version: v1
+  - kind: ServiceAccount
+    name: kagent-controller
+    namespace: kagent
+    status: Synced
+    version: v1
+  - kind: ServiceAccount
+    name: kagent-grafana-mcp
+    namespace: kagent
+    status: Synced
+    version: v1
+  - kind: ServiceAccount
+    name: kagent-kmcp-controller-manager
+    namespace: kagent
+    status: Synced
+    version: v1
+  - kind: ServiceAccount
+    name: kagent-postgresql
+    namespace: kagent
+    status: Synced
+    version: v1
+  - kind: ServiceAccount
+    name: kagent-tools
+    namespace: kagent
+    status: Synced
+    version: v1
+  - kind: ServiceAccount
+    name: kagent-ui
+    namespace: kagent
+    status: Synced
+    version: v1
+  - group: apps
+    health:
+      status: Healthy
+    kind: Deployment
+    name: kagent-controller
+    namespace: kagent
+    status: Synced
+    version: v1
+  - group: apps
+    health:
+      status: Healthy
+    kind: Deployment
+    name: kagent-grafana-mcp
+    namespace: kagent
+    status: Synced
+    version: v1
+  - group: apps
+    health:
+      status: Healthy
+    kind: Deployment
+    name: kagent-kmcp-controller-manager
+    namespace: kagent
+    status: Synced
+    version: v1
+  - group: apps
+    health:
+      status: Healthy
+    kind: Deployment
+    name: kagent-postgresql
+    namespace: kagent
+    status: Synced
+    version: v1
+  - group: apps
+    health:
+      status: Healthy
+    kind: Deployment
+    name: kagent-tools
+    namespace: kagent
+    status: Synced
+    version: v1
+  - group: apps
+    health:
+      status: Healthy
+    kind: Deployment
+    name: kagent-ui
+    namespace: kagent
+    status: Synced
+    version: v1
+  - group: kagent.dev
+    health:
+      message: Pending deletion
+      status: Progressing
+    kind: Agent
+    name: k8s-agent
+    namespace: kagent
+    status: Synced
+    version: v1alpha2
+  - group: kagent.dev
+    kind: ModelConfig
+    name: default-model-config
+    namespace: kagent
+    status: Synced
+    version: v1alpha2
+  - group: kagent.dev
+    kind: RemoteMCPServer
+    name: kagent-grafana-mcp
+    namespace: kagent
+    status: Synced
+    version: v1alpha2
+  - group: kagent.dev
+    kind: RemoteMCPServer
+    name: kagent-tool-server
+    namespace: kagent
+    status: Synced
+    version: v1alpha2
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: kagent-getter-role
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: kagent-kmcp-manager-role
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: kagent-kmcp-metrics-auth-role
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: kagent-kmcp-metrics-reader
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: kagent-tools-cluster-admin-role
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: kagent-writer-role
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRoleBinding
+    name: kagent-getter-rolebinding
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRoleBinding
+    name: kagent-kmcp-manager-rolebinding
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRoleBinding
+    name: kagent-kmcp-metrics-auth-rolebinding
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRoleBinding
+    name: kagent-tools-cluster-admin-rolebinding
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRoleBinding
+    name: kagent-writer-rolebinding
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: Role
+    name: kagent-kmcp-leader-election-role
+    namespace: kagent
+    status: Synced
+    version: v1
+  - group: rbac.authorization.k8s.io
+    kind: RoleBinding
+    name: kagent-kmcp-leader-election-rolebinding
+    namespace: kagent
+    status: Synced
+    version: v1
+  sourceType: Helm
+  summary:
+    images:
+    - docker.io/library/postgres:18.6-alpine3.23
+    - ghcr.io/kagent-dev/kagent/controller:0.10.1
+    - ghcr.io/kagent-dev/kagent/tools:0.2.1
+    - ghcr.io/kagent-dev/kagent/ui:0.10.1
+    - ghcr.io/kagent-dev/kmcp/controller:0.3.0
+    - mcp/grafana:latest
+  sync:
+    comparedTo:
+      destination:
+        namespace: kagent
+        server: https://kubernetes.default.svc
+      ignoreDifferences:
+      - group: kagent.dev
+        jsonPointers:
+        - /spec/declarative/modelConfig
+        kind: Agent
+        name: k8s-agent
+      source:
+        chart: kagent
+        helm:
+          values: |
+            tag: "0.10.1"
+            controller:
+              image:
+                tag: "0.10.1"
+            ui:
+              image:
+                tag: "0.10.1"
+            istio-agent:
+              enabled: false
+            cilium-policy-agent:
+              enabled: false
+            cilium-manager-agent:
+              enabled: false
+            cilium-debug-agent:
+              enabled: false
+            helm-agent:
+              enabled: false
+            kgateway-agent:
+              enabled: false
+            observability-agent:
+              enabled: false
+            promql-agent:
+              enabled: false
+            argo-rollouts-agent:
+              enabled: false
+            providers:
+              default: gemini
+              gemini:
+                apiKey: GEMINI_API_KEY
+    model: gemini-2.5-flash
+        repoURL: ghcr.io/kagent-dev/kagent/helm
+        targetRevision: 0.10.1
+    revision: 0.10.1
+    status: Synced

@@ -39,9 +39,10 @@ spec:
         argo-rollouts-agent:
           enabled: false
         providers:
-          default: openAI
-          openAI:
-            apiKey: OPENAI_API_KEY
+          default: gemini
+          gemini:
+            apiKey: GEMINI_API_KEY
+            model: gemini-2.5-flash
   destination:
     server: https://kubernetes.default.svc
     namespace: kagent
@@ -51,9 +52,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-  ignoreDifferences:
-  - group: kagent.dev
-    kind: Agent
-    name: k8s-agent
-    jsonPointers:
-    - /spec/declarative/modelConfig
