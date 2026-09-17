@@ -3,7 +3,7 @@
 ## Context
 We are evaluating two different embedding architectures for our Agentic Retrieval pipeline. The goal is to compare the official Qdrant MCP server against our custom-built Qdrant MCP server to determine the best default stack for the AI harness.
 
-Both pipelines use `gemini-3.6-flash` as the core reasoning engine, write graph relationships to a shared Neo4j database, but differ in how they embed and store semantic text:
+Both pipelines use `gemini-3.5-flash-lite` as the core reasoning engine, write graph relationships to a shared Neo4j database, but differ in how they embed and store semantic text:
 
 1. **Official Stack (`retrieval-agent-official`)**:
    - **MCP Server**: `qdrant-mcp-official` (Astral `uvx mcp-server-qdrant`)
@@ -54,7 +54,7 @@ We will rank the performance of both stacks across four dimensions:
 
 ### 2. Agentic Routing (Tool Selection Accuracy)
 *Does the underlying embedding quality affect how the LLM decides to use tools?*
-* While the LLM (`gemini-3.6-flash`) is constant, poor vector retrieval results often trick an agent into falling back to incorrect Cypher queries, or vice-versa. 
+* While the LLM (`gemini-3.5-flash-lite`) is constant, poor vector retrieval results often trick an agent into falling back to incorrect Cypher queries, or vice-versa. 
 * *Metric:* Did the agent pick the correct tool (Vector vs Graph) on the first try based on the system prompt's rules?
 
 ### 3. Architecture & Latency
