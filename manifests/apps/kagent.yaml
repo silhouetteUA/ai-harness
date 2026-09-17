@@ -51,3 +51,9 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+  ignoreDifferences:
+  - group: kagent.dev
+    kind: Agent
+    name: k8s-agent
+    jsonPointers:
+    - /spec/declarative/modelConfig
