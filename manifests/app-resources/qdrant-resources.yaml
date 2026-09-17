@@ -28,20 +28,6 @@ spec:
     - path:
         type: PathPrefix
         value: /
-    filters:
-    - type: URLRewrite
-      urlRewrite:
-        path:
-          type: ReplacePrefixMatch
-          replacePrefixMatch: /dashboard
-    backendRefs:
-    - name: qdrant
-      namespace: qdrant
-      port: 6333
-  - matches:
-    - path:
-        type: PathPrefix
-        value: /dashboard
     backendRefs:
     - name: qdrant
       namespace: qdrant
