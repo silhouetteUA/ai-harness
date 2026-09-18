@@ -81,3 +81,37 @@ Despite winning the vector searches, the Official Stack suffered two catastrophi
 Iteration 2 proved that in-process Python AI servers (like the Official FastMCP stack) are unstable in Kubernetes under load. Relying on a custom Go-based MCP bridge that delegates embedding to a dedicated, out-of-process inference pool (`llama.cpp` / `llm-d`) completely isolates our agent framework from memory-intensive AI crashes. 
 
 While the Official stack proved that data chunking is mathematically superior for exact-keyword vector lookups, the Custom stack provides honesty (no hallucinations) and rock-solid stability. We will adopt the Custom Stack, with a future engineering mandate to implement a text-chunking strategy within the Go MCP server before embedding.
+
+---
+
+## Appendix: Iteration 2 Raw Queries & Results
+
+### 1. Ingestion Prompt
+> *Fetch the raw YAML for all Deployments in the 'kagent' namespace. Do not summarize them. Pass the complete, raw YAML strings exactly as retrieved directly into the vector store.*
+* **Custom:** Successfully ingested all YAML manifests.
+* **Official:** Successfully ingested all 12 Deployments (`k8s-agent`, `kagent-controller`, etc.).
+
+### 2. Retrieval Query 1 (The Kill-Shot / Vector Check)
+> *What is the 'dnsPolicy' configured in the k8s-agent Deployment? (Do not execute any k8s-agent tool calls; rely entirely on your retrieval stores.)*
+* **Custom:** Failed to find it. ("dnsPolicy field is not explicitly configured under spec.template.spec.")
+* **Official:** Successfully found it. ("dnsPolicy configured in the k8s-agent Deployment is ClusterFirst.")
+
+### 3. Retrieval Query 2 (Graph Topology Check)
+> *Which agents in the cluster depend on the k8s agent? (Do not execute any k8s-agent tool calls; rely entirely on your retrieval stores.)*
+* **Custom:** Success. Identified `retrieval-agent-custom` and `retrieval-agent-official` via `USES_TOOL`.
+* **Official:** Success. Identified `retrieval-agent-custom` and `retrieval-agent-official` via `USES_TOOL`.
+
+### 4. Retrieval Query 3 (Hybrid Synthesis Check)
+> *What API key secret does the cluster's default model provider use? (Do not execute any k8s-agent tool calls; rely entirely on your retrieval stores.)*
+* **Custom:** Success (Honest). Correctly reported that the vector store only contains standard cluster Deployments, so it cannot find the API key secret for the `ModelConfig`.
+* **Official:** Hallucination. Incorrectly claimed it found it in the vector store ("The secret used to supply the API key... is kagent-gemini"), despite the fact that `ModelConfig` objects were never ingested.
+
+### 5. Retrieval Query (Cross-Object Vector Search)
+> *Which Deployments in the kagent namespace are configured to expose port 8080? (Do not execute any k8s-agent tool calls; rely entirely on your retrieval stores.)*
+* **Custom:** Failed to find it. ("do not contain container port specifications (containerPort: 8080)")
+* **Official:** Successfully found it. ("The container kagent explicitly sets up --port, '8080'")
+
+### 6. Retrieval Query (Multi-Hop Hybrid)
+> *Find all Agents in the cluster. For each Agent, tell me which ModelConfig it uses, and what the stream setting is configured to inside that ModelConfig. (Do not execute any k8s-agent tool calls; rely entirely on your retrieval stores.)*
+* **Custom:** Success (Honest). Successfully traversed the graph to find all agents and their `ModelConfig`, and correctly stated that the `stream` setting is not in the vector store because `ModelConfigs` were never ingested.
+* **Official:** Crash. The MCP server failed during execution: `rejected by transport: Post "http://qdrant-mcp-official.kagent:3000/mcp": context deadline exceeded`.
