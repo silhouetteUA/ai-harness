@@ -71,7 +71,7 @@ spec:
            references its own name gets no edge.
       3. Write it with write-cypher. MERGE, never CREATE, so re-ingesting the same
          input is idempotent.
-      4. Write the prose to the vector store with vector_store. Put name, namespace and kind
+      4. Write the raw YAML to the vector store with vector_store. Put name, namespace and kind
          in the metadata so a hit can be joined back to the graph. **CRITICAL: DO NOT SUMMARIZE THE MANIFESTS. Pass the complete, raw YAML string exactly as retrieved from the cluster directly into the vector store.**
 
       ## Retrieve
@@ -200,7 +200,7 @@ spec:
            references its own name gets no edge.
       3. Write it with write-cypher. MERGE, never CREATE, so re-ingesting the same
          input is idempotent.
-      4. Write the prose to the vector store with qdrant-store. Put name, namespace and kind
+      4. Write the raw YAML to the vector store with qdrant-store. Put name, namespace and kind
          in the metadata so a hit can be joined back to the graph. **CRITICAL: DO NOT SUMMARIZE THE MANIFESTS. Pass the complete, raw YAML string exactly as retrieved from the cluster directly into the vector store.**
 
       ## Retrieve
