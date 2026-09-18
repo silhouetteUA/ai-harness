@@ -61,10 +61,23 @@ After explicitly forbidding the `k8s-agent` in the prompt, both models correctly
 **Query:** *"Find the HTTPRoute that maps traffic to port 8083..."*
 * Both agents correctly determined that `HTTPRoute` resources were never ingested (since the ingestion phase only targeted Deployments, Services, and Agents). All tasks across both architectures were completed successfully without hallucination.
 
-### The "Kill-Shot" Test Note
-While both models performed identically on short prose summaries, the theoretical "Kill-Shot" test (ingesting massive, raw YAML manifests untouched) would severely break the Official `MiniLM` model due to its strict 384-token context limit, causing massive YAML files to be silently truncated. The Custom `nomic-embed` model (with its 8192-token context) would flawlessly embed the entire file. However, since the current architecture summarizes manifests before embedding, this architectural limitation is moot and the test is obvious enough that there is no need to perform it.
+### Iteration 2: The Raw YAML "Kill-Shot"
+To validate the architectural limits of the embedding models, we ran a second iteration where both agents were forced to ingest the **raw, unsummarized YAML** of all 12 Deployments in the namespace, followed by complex vector and hybrid queries.
+
+**1. The Context Dilution Trap (Custom Failure)**
+The Custom Stack (`nomic-embed`) successfully ingested the massive payloads (storing 12 distinct points), but failed several exact-keyword lookups (e.g., finding the `dnsPolicy` field). Because `nomic` has an 8192-token window, it stored the entire 300-line YAML file as a single vector point. When searching for a specific keyword, the semantic similarity is mathematically diluted ("Needle in a Haystack"), causing the LLM to miss the result.
+
+**2. The Chunking Advantage (Official Success)**
+The Official Stack (`MiniLM`) succeeded in the exact-keyword lookups. The `fastembed` library automatically chunks text into small paragraphs before embedding. By chunking the YAML, exact keyword searches hit small chunks with extremely high similarity scores, proving that **chunking is mandatory** even for long-context models.
+
+**3. Hallucination & Instability (Official Failure)**
+Despite winning the vector searches, the Official Stack suffered two catastrophic failures:
+* **Hallucination:** When asked about a `ModelConfig` secret (which was never ingested), the Official agent hallucinated the correct answer from its chat history. The Custom agent honestly reported the data was missing.
+* **Server Crash:** On the final complex hybrid query, the Official MCP Server (`qdrant-mcp-official`) locked up and crashed (`context deadline exceeded`). The in-process Python server could not handle the memory footprint of heavy embedding searches under load.
 
 ## Final Decision
-Both the official Astral Qdrant MCP server (`mcp-server-qdrant`) and the Custom Qdrant MCP server completed all tasks successfully and accurately. 
+**Decision: We will use the Custom Stack (`abox-nomic`).**
 
-**Decision:** We will default to the **Official Stack** (`qdrant-mcp-official`). Relying on a community-maintained FastMCP implementation (Astral) drastically reduces the codebase maintenance burden compared to a custom-written Go MCP server. The token limits of `MiniLM` are fully mitigated by the agent's summarization capabilities during ingestion.
+Iteration 2 proved that in-process Python AI servers (like the Official FastMCP stack) are unstable in Kubernetes under load. Relying on a custom Go-based MCP bridge that delegates embedding to a dedicated, out-of-process inference pool (`llama.cpp` / `llm-d`) completely isolates our agent framework from memory-intensive AI crashes. 
+
+While the Official stack proved that data chunking is mathematically superior for exact-keyword vector lookups, the Custom stack provides honesty (no hallucinations) and rock-solid stability. We will adopt the Custom Stack, with a future engineering mandate to implement a text-chunking strategy within the Go MCP server before embedding.
