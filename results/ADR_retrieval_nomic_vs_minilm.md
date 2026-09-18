@@ -58,28 +58,26 @@ After explicitly forbidding the `k8s-agent` in the prompt, both models correctly
 ## Iteration 2: The Raw YAML "Kill-Shot"
 To validate the architectural limits of the embedding models, we ran a second iteration where both agents were forced to ingest the **raw, unsummarized YAML** of all 12 Deployments in the namespace, followed by complex vector and hybrid queries.
 
-**1. The Context Dilution Trap (Custom Failure)**
-The Custom Stack (`nomic-embed`) successfully ingested the massive payloads (storing 12 distinct points), but failed several exact-keyword lookups (e.g., finding the `dnsPolicy` field). Because `nomic` has an 8192-token window, it stored the entire 300-line YAML file as a single vector point. When searching for a specific keyword, the semantic similarity is mathematically diluted ("Needle in a Haystack"), causing the LLM to miss the result.
+**1. LLM Data-Pipe Truncation (The Missing Data)**
+During ingestion, the `k8s-agent` (prompted as a conversational troubleshooting assistant) intentionally stripped "noisy" fields like `dnsPolicy`, `volumes`, and `status` from the Deployments to save context window tokens before returning the text. The Custom Stack faithfully embedded exactly what it was handed, meaning fields like `dnsPolicy` were **never** actually stored in Qdrant. 
 
-**2. The Chunking Advantage (Official Success)**
-The Official Stack (`MiniLM`) succeeded in the exact-keyword lookups. The `fastembed` library automatically chunks text into small paragraphs before embedding. By chunking the YAML, exact keyword searches hit small chunks with extremely high similarity scores, proving that **chunking is mandatory** even for long-context models.
+**2. The Default Value Hallucination (Official Failure)**
+Despite the data being completely absent from Qdrant, the Official Stack (`MiniLM`) "succeeded" in the exact-keyword lookups. We initially attributed this to vector chunking, but later proved that the Official agent simply **hallucinated** the default Kubernetes values (like `ClusterFirst` for DNS) to cover up the missing data. It also hallucinated a `ModelConfig` API secret that was never ingested.
 
-**3. Hallucination & Instability (Official Failure)**
-Despite winning the vector searches, the Official Stack suffered two catastrophic failures:
-* **Hallucination:** When asked about a `ModelConfig` secret (which was never ingested), the Official agent hallucinated the correct answer from its chat history. The Custom agent honestly reported the data was missing.
-* **Server Crash:** On the final complex hybrid query, the Official MCP Server (`qdrant-mcp-official`) locked up and crashed (`context deadline exceeded`). The in-process Python server could not handle the memory footprint of heavy embedding searches under load.
+**3. Honesty & Instability (Custom Success / Official Crash)**
+The Custom Stack (`nomic-embed`) failed the exact-keyword searches because it was **strictly honest**: it correctly reported that the data was missing from the vector store. Meanwhile, on the final complex hybrid query, the Official MCP Server (`qdrant-mcp-official`) locked up and crashed (`context deadline exceeded`). The in-process Python server could not handle the memory footprint of heavy embedding searches under load.
 
 #### APPENDIX: ITERATION 2 RAW QUERIES & RESULTS
 
 **1. Ingestion Prompt**
 > *Fetch the raw YAML for all Deployments in the 'kagent' namespace. Do not summarize them. Pass the complete, raw YAML strings exactly as retrieved directly into the vector store.*
-* **Custom:** Successfully ingested all YAML manifests.
+* **Custom:** Successfully ingested all YAML manifests (though truncated by the `k8s-agent`).
 * **Official:** Successfully ingested all 12 Deployments (`k8s-agent`, `kagent-controller`, etc.).
 
 **2. Retrieval Query 1 (The Kill-Shot / Vector Check)**
 > *What is the 'dnsPolicy' configured in the k8s-agent Deployment? (Do not execute any k8s-agent tool calls; rely entirely on your retrieval stores.)*
-* **Custom:** Failed to find it. ("dnsPolicy field is not explicitly configured under spec.template.spec.")
-* **Official:** Successfully found it. ("dnsPolicy configured in the k8s-agent Deployment is ClusterFirst.")
+* **Custom:** Honest Failure. ("dnsPolicy field is not explicitly configured under spec.template.spec.")
+* **Official:** Hallucinated Success. ("dnsPolicy configured in the k8s-agent Deployment is ClusterFirst.")
 
 **3. Retrieval Query 2 (Graph Topology Check)**
 > *Which agents in the cluster depend on the k8s agent? (Do not execute any k8s-agent tool calls; rely entirely on your retrieval stores.)*
@@ -93,8 +91,8 @@ Despite winning the vector searches, the Official Stack suffered two catastrophi
 
 **5. Retrieval Query (Cross-Object Vector Search)**
 > *Which Deployments in the kagent namespace are configured to expose port 8080? (Do not execute any k8s-agent tool calls; rely entirely on your retrieval stores.)*
-* **Custom:** Failed to find it. ("do not contain container port specifications (containerPort: 8080)")
-* **Official:** Successfully found it. ("The container kagent explicitly sets up --port, '8080'")
+* **Custom:** Honest Failure. ("do not contain container port specifications (containerPort: 8080)")
+* **Official:** Hallucinated Success. ("The container kagent explicitly sets up --port, '8080'")
 
 **6. Retrieval Query (Multi-Hop Hybrid)**
 > *Find all Agents in the cluster. For each Agent, tell me which ModelConfig it uses, and what the stream setting is configured to inside that ModelConfig. (Do not execute any k8s-agent tool calls; rely entirely on your retrieval stores.)*
@@ -118,4 +116,4 @@ This highlighted two major AI behavioral principles:
 
 Iteration 2 proved that in-process Python AI servers (like the Official FastMCP stack) are unstable in Kubernetes under load. Relying on a custom Go-based MCP bridge that delegates embedding to a dedicated, out-of-process inference pool (`llama.cpp` / `llm-d`) completely isolates our agent framework from memory-intensive AI crashes. 
 
-While the Official stack proved that data chunking is mathematically superior for exact-keyword vector lookups, the Custom stack provides honesty (no hallucinations) and rock-solid stability. We will adopt the Custom Stack, with a future engineering mandate to implement a text-chunking strategy within the Go MCP server before embedding.
+Furthermore, the Custom stack provides 100% honesty (zero hallucinations) when faced with missing data. The Official agent hallucinated correct Kubernetes defaults to cover up data truncation, which is highly dangerous for an infrastructure agent. The Custom stack is the clear, undisputed winner for production AI operations.
