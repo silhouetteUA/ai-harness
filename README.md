@@ -30,6 +30,26 @@ kubectl get applications -n argocd      # check sync status of all apps
 kubectl get pods -A                     # verify all components are running
 ```
 
+## 2. Setting the API Key
+
+Because the cluster is configured to use Gemini via GitOps, the `default-model-config` will look for a Kubernetes Secret containing your API key. If this secret is missing, your agents will be in an unavailable state.
+
+Run the following command to populate the secret (replace `YOUR_API_KEY` with your actual Google AI Studio key, or use an environment variable):
+
+```bash
+kubectl create secret generic kagent-gemini \
+  --namespace kagent \
+  --from-literal=GOOGLE_API_KEY="YOUR_API_KEY"
+```
+
+## 3. Usage
+
+After the infrastructure has settled, load up the kagent UI via your local port forward.
+
+```bash
+kubectl port-forward -n agentgateway-system svc/agentgateway-external 8081:80
+```
+
 To clean everything up, simply run:
 ```bash
 make destroy
