@@ -42,13 +42,12 @@ kubectl create secret generic kagent-gemini \
   --from-literal=GOOGLE_API_KEY="YOUR_API_KEY"
 ```
 
-Alternatively, if you have your key saved in a local `.env` file as `GEMINI_API_KEY`, you can simply copy and paste this command to pull it automatically:
+Alternatively, if you have your key saved in a local `.env` file as `GEMINI_API_KEY`, you can run this command. It uses a subshell `()` to securely pull the key without permanently exposing it in your terminal environment:
 
 ```bash
-set -a; source .env; set +a
-kubectl create secret generic kagent-gemini \
+(set -a; source .env; kubectl create secret generic kagent-gemini \
   --namespace kagent \
-  --from-literal=GOOGLE_API_KEY="$GEMINI_API_KEY"
+  --from-literal=GOOGLE_API_KEY="$GEMINI_API_KEY")
 ```
 
 ## 3. Usage
