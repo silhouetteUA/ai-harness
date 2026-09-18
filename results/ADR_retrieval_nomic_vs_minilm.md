@@ -65,6 +65,10 @@ After explicitly forbidding the `k8s-agent` in the prompt, both models correctly
 While both models performed identically on short prose summaries, the theoretical "Kill-Shot" test (ingesting massive, raw YAML manifests untouched) would severely break the Official `MiniLM` model due to its strict 384-token context limit, causing massive YAML files to be silently truncated. The Custom `nomic-embed` model (with its 8192-token context) would flawlessly embed the entire file. However, since the current architecture summarizes manifests before embedding, this architectural limitation is moot and the test is obvious enough that there is no need to perform it.
 
 ## Final Decision
-Both the official Astral Qdrant MCP server (`mcp-server-qdrant`) and the Custom Qdrant MCP server completed all tasks successfully and accurately. 
+**Decision: We will use the Custom Stack (`abox-nomic`).**
 
-**Decision:** We will default to the **Official Stack** (`qdrant-mcp-official`). Relying on a community-maintained FastMCP implementation (Astral) drastically reduces the codebase maintenance burden compared to a custom-written Go MCP server. The token limits of `MiniLM` are fully mitigated by the agent's summarization capabilities during ingestion.
+During Iteration 2 (The Kill-Shot Test), we forced both agents to ingest massive, raw YAML manifests without summarizing them. 
+* The Custom Stack effortlessly ingested all 12 raw deployments into the `abox-nomic` collection, proving its out-of-process inference model and 8192-token context window can handle production-scale infrastructure code.
+* The Official Stack (`qdrant-mcp-official`) **catastrophically failed** and crashed (`OOMKilled - Exit Code 137`). Because the official Astral FastMCP server runs the embedding model (`MiniLM`) *in-process*, the sudden spike of massive YAML payloads caused the Python memory footprint to instantly blow past its 512Mi limit, killing the pod.
+
+Relying on a custom Go-based MCP bridge that delegates embedding to a dedicated, out-of-process inference pool (`llama.cpp` / `llm-d`) completely isolates our agent framework from memory-intensive AI workloads. The Custom Stack is the only viable option for handling raw Kubernetes manifests at scale.
