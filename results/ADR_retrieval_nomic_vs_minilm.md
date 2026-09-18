@@ -55,7 +55,7 @@ After explicitly forbidding the `k8s-agent` in the prompt, both models correctly
 **Query:** *"Find the HTTPRoute that maps traffic to port 8083..."*
 * Both agents correctly determined that `HTTPRoute` resources were never ingested (since the ingestion phase only targeted Deployments, Services, and Agents). All tasks across both architectures were completed successfully without hallucination.
 
-### Iteration 2: The Raw YAML "Kill-Shot"
+## Iteration 2: The Raw YAML "Kill-Shot"
 To validate the architectural limits of the embedding models, we ran a second iteration where both agents were forced to ingest the **raw, unsummarized YAML** of all 12 Deployments in the namespace, followed by complex vector and hybrid queries.
 
 **1. The Context Dilution Trap (Custom Failure)**
