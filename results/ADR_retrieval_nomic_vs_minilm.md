@@ -103,6 +103,16 @@ Despite winning the vector searches, the Official Stack suffered two catastrophi
 
 ---
 
+## Iteration 3: Simple Queries & Context Contamination
+In a final test, we executed simple retrieval queries (e.g., *"list all deployments"*) in a **brand new chat session**, completely omitting the negative guardrails (*"do not use the k8s-agent"*). 
+* **Result:** Both agents successfully relied entirely on their search stores and **did not** cheat or delegate to the `k8s-agent`.
+
+This highlighted two major AI behavioral principles:
+1. **Context Window Contamination:** In earlier iterations, explicitly instructing the agent to "use the k8s-agent" during ingestion permanently biased its conversation history. In a new chat, this bias is wiped clean, improving its adherence to the system prompt.
+2. **Tool Temptation & Complexity:** When LLMs evaluate complex, multi-hop RAG prompts, the probability of them falling back to a "cheat" tool (live cluster queries) skyrockets because calculating Cypher/Vector mappings feels too risky. For simple queries, generating the Cypher query is easy, so the temptation to cheat disappears.
+
+---
+
 ## Final Decision
 **Decision: We will use the Custom Stack (`abox-nomic`).**
 
