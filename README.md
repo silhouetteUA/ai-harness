@@ -42,6 +42,15 @@ kubectl create secret generic kagent-gemini \
   --from-literal=GOOGLE_API_KEY="YOUR_API_KEY"
 ```
 
+Alternatively, if you have your key saved in a local `.env` file as `GEMINI_API_KEY`, you can simply copy and paste this command to pull it automatically:
+
+```bash
+set -a; source .env; set +a
+kubectl create secret generic kagent-gemini \
+  --namespace kagent \
+  --from-literal=GOOGLE_API_KEY="$GEMINI_API_KEY"
+```
+
 ## 3. Usage
 
 After the infrastructure has settled, load up the kagent UI via your local port forward.
