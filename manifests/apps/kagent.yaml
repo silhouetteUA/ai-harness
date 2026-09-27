@@ -20,9 +20,6 @@ spec:
             exporter:
               otlp:
                 endpoint: "http://phoenix-svc.phoenix.svc:4317"
-        env:
-          - name: OTEL_EXPORTER_OTLP_HEADERS
-            value: "Authorization=Basic YWRtaW5AbG9jYWxob3N0OnJvb3Q="
         controller:
           image:
             tag: "0.10.1"
