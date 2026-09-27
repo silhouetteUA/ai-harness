@@ -63,6 +63,58 @@ To clean everything up, simply run:
 make destroy
 ```
 
+## 4. Enabling Observability (Arize Phoenix)
+
+To enable tracing for your KAgent AI agents, you need to configure them to export OpenTelemetry (OTLP) data to Arize Phoenix. Because Phoenix has authentication enabled by default, this requires generating an API key.
+
+1. **Create an API Token in Phoenix:**
+   - Log into the Phoenix UI (default is usually `admin@localhost` / `root`).
+   - Navigate to the settings and generate a new API Key / Access Token.
+
+2. **Update `kagent.yaml`:**
+   - Open `manifests/apps/kagent.yaml`.
+   - Update the `env` block in the Helm values to include your Bearer token and enable GenAI message content capture (so prompts and responses are visible):
+     ```yaml
+        otel:
+          tracing:
+            enabled: true
+            exporter:
+              otlp:
+                endpoint: "http://phoenix-svc.phoenix.svc:4317"
+        env:
+          - name: OTEL_EXPORTER_OTLP_HEADERS
+            value: "Authorization=Bearer <YOUR_GENERATED_TOKEN>"
+          - name: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
+            value: "true"
+     ```
+   - Add an `ignoreDifferences` block for the controller ConfigMap so Argo CD doesn't revert manual patches (if applicable):
+     ```yaml
+       ignoreDifferences:
+       - group: ""
+         kind: ConfigMap
+         name: kagent-controller
+         jsonPointers:
+         - /data/OTEL_EXPORTER_OTLP_HEADERS
+         - /data/OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
+     ```
+
+3. **Rollout the Changes with Argo CD:**
+   - Commit and push your changes to Git:
+     ```bash
+     git add manifests/apps/kagent.yaml
+     git commit -m "chore: configure phoenix tracing"
+     git push
+     ```
+   - Force Argo CD to sync the application:
+     ```bash
+     kubectl annotate application kagent -n argocd argocd.argoproj.io/refresh=hard --overwrite
+     ```
+   - Patch the ConfigMap and restart the controller to immediately propagate the changes to the agents:
+     ```bash
+     kubectl patch cm kagent-controller -n kagent -p '{"data": {"OTEL_EXPORTER_OTLP_HEADERS": "Authorization=Bearer <YOUR_GENERATED_TOKEN>", "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT": "true"}}'
+     kubectl rollout restart deployment kagent-controller -n kagent
+     ```
+
 ## How it works
 
 ```
