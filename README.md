@@ -85,7 +85,7 @@ To enable tracing for your KAgent AI agents, you need to configure them to expor
           - name: OTEL_EXPORTER_OTLP_HEADERS
             value: "Authorization=Bearer <YOUR_GENERATED_TOKEN>"
           - name: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
-            value: "true"
+            value: "SPAN_AND_EVENT"
      ```
    - Add an `ignoreDifferences` block for the controller ConfigMap so Argo CD doesn't revert manual patches (if applicable):
      ```yaml
