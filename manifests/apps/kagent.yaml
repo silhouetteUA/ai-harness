@@ -23,6 +23,8 @@ spec:
         env:
           - name: OTEL_EXPORTER_OTLP_HEADERS
             value: "Authorization=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJBcGlLZXk6MSJ9.-sAfgB07jS_4naVQqmfT4SrwSD1mW8YdzljlQprlPOg"
+          - name: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
+            value: "true"
         controller:
           image:
             tag: "0.10.1"
@@ -71,3 +73,4 @@ spec:
     name: kagent-controller
     jsonPointers:
     - /data/OTEL_EXPORTER_OTLP_HEADERS
+    - /data/OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
