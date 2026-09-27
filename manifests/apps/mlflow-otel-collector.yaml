@@ -1,0 +1,80 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mlflow-otel-collector
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
+    targetRevision: 0.173.1
+    chart: opentelemetry-collector
+    helm:
+      values: |
+        mode: deployment
+        fullnameOverride: otel-collector
+        image:
+          repository: otel/opentelemetry-collector-contrib
+        ports:
+          jaeger-compact:
+            enabled: false
+          jaeger-thrift:
+            enabled: false
+          jaeger-grpc:
+            enabled: false
+          zipkin:
+            enabled: false
+        config:
+          connectors:
+            routing:
+              table:
+                - statement: route() where resource.attributes["k8s.namespace.name"] == "kagent"
+                  pipelines: [traces/kagent]
+                # Default bucket for anything else
+                - statement: route() where true
+                  pipelines: [traces/default]
+          exporters:
+            otlp_http/mlflow-kagent:
+              endpoint: http://mlflow-mlflow.mlflow.svc.cluster.local:5000
+              tls:
+                insecure: true
+              headers:
+                x-mlflow-experiment-id: "1"
+            otlp_http/mlflow-default:
+              endpoint: http://mlflow-mlflow.mlflow.svc.cluster.local:5000
+              tls:
+                insecure: true
+              headers:
+                x-mlflow-experiment-id: "0"
+          receivers:
+            jaeger: null
+            zipkin: null
+          service:
+            pipelines:
+              traces:
+                receivers:
+                  - otlp
+                exporters:
+                  - debug
+                  - routing
+              traces/kagent:
+                receivers:
+                  - routing
+                exporters:
+                  - otlp_http/mlflow-kagent
+              traces/default:
+                receivers:
+                  - routing
+                exporters:
+                  - otlp_http/mlflow-default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlflow
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

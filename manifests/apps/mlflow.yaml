@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mlflow
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ghcr.io/mlflow/charts
+    targetRevision: 0.1.0
+    chart: mlflow
+    helm:
+      values: |
+        storage:
+          enabled: true
+        mlflow:
+          backendStoreUri: "sqlite:////mlflow/mlflow.db"
+          defaultArtifactRoot: "mlflow-artifacts:/"
+          artifactsDestination: "/mlflow/artifacts"
+        server:
+          flag_options:
+            - serve_artifacts
+          value_options:
+            allowed-hosts: "mlflow-mlflow.mlflow.svc.cluster.local,mlflow-mlflow.mlflow.svc.cluster.local:*,localhost,localhost:*,127.0.0.1,127.0.0.1:*"
+            workers: 2
+        resources:
+          requests:
+            cpu: 250m
+            memory: 768Mi
+          limits:
+            cpu: "1"
+            memory: 2Gi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlflow
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
