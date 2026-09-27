@@ -47,7 +47,7 @@ Alternatively, if you have your key saved in a local `.env` file as `GEMINI_API_
 ```bash
 (set -a; source .env; kubectl create secret generic kagent-gemini \
   --namespace kagent \
-  --from-literal=GOOGLE_API_KEY="$GEMINI_API_KEY")
+  --from-literal=GOOGLE_API_KEY="$GOOGLE_API_KEY")
 ```
 
 ## 3. Usage
