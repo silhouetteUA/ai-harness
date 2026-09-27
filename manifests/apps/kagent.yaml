@@ -66,3 +66,8 @@ spec:
     name: kagent-gemini
     jsonPointers:
     - /data/GOOGLE_API_KEY
+  - group: ""
+    kind: ConfigMap
+    name: kagent-controller
+    jsonPointers:
+    - /data/OTEL_EXPORTER_OTLP_HEADERS
