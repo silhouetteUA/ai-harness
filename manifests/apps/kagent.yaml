@@ -14,6 +14,12 @@ spec:
     helm:
       values: |
         tag: "0.10.1"
+        otel:
+          tracing:
+            enabled: true
+            exporter:
+              otlp:
+                endpoint: "http://phoenix-svc.phoenix.svc:4317"
         controller:
           image:
             tag: "0.10.1"
