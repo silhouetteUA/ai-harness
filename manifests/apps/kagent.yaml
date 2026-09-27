@@ -9,11 +9,11 @@ spec:
   project: default
   source:
     repoURL: ghcr.io/kagent-dev/kagent/helm
-    targetRevision: 0.10.1
+    targetRevision: 0.10.2
     chart: kagent
     helm:
       values: |
-        tag: "0.10.1"
+        tag: "0.10.2"
         otel:
           tracing:
             enabled: true
@@ -27,10 +27,10 @@ spec:
             value: "SPAN_AND_EVENT"
         controller:
           image:
-            tag: "0.10.1"
+            tag: "0.10.2"
         ui:
           image:
-            tag: "0.10.1"
+            tag: "0.10.2"
         istio-agent:
           enabled: false
         cilium-policy-agent:
