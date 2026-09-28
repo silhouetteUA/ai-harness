@@ -1,57 +1,44 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
   name: opentelemetry-demo
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
+  destination:
+    namespace: otel-demo
+    server: https://kubernetes.default.svc
   project: default
   source:
-    repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
-    targetRevision: "0.41.2"
     chart: opentelemetry-demo
     helm:
-      values: |
-        components:
-          load-generator:
-            envOverrides:
-              - name: LOCUST_HEADLESS
-                value: "false"
-            service:
-              port: 8089
-        jaeger:
-          enabled: true
-        prometheus:
-          enabled: false
-        grafana:
-          enabled: false
-        opensearch:
-          enabled: false
-        opentelemetry-collector:
-          config:
-            exporters:
-              otlp_grpc/phoenix:
-                endpoint: phoenix-svc.phoenix.svc.cluster.local:4317
-                tls:
-                  insecure: true
-                headers:
-                  Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJBcGlLZXk6MSJ9.-sAfgB07jS_4naVQqmfT4SrwSD1mW8YdzljlQprlPOg"
-            service:
-              pipelines:
-                traces:
-                  exporters:
-                    - otlp_grpc/jaeger
-                    - debug
-                    - span_metrics
-                    - otlp_grpc/phoenix
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: otel-demo
+      values: "components:\n  accounting:\n    enabled: false\n  ad:\n    enabled:\
+        \ false\n  agent:\n    enabled: false\n  astronomy-db:\n    enabled: false\n\
+        \  cart:\n    enabled: false\n  chatbot:\n    enabled: false\n  checkout:\n\
+        \    enabled: false\n  currency:\n    enabled: false\n  email:\n    enabled:\
+        \ false\n  flagd:\n    enabled: false\n  fraud-detection:\n    enabled: false\n\
+        \  frontend:\n    enabled: false\n  frontend-proxy:\n    enabled: false\n\
+        \  image-provider:\n    enabled: false\n  kafka:\n    enabled: false\n  load-generator:\n\
+        \    enabled: false\n    envOverrides:\n    - name: LOCUST_HEADLESS\n    \
+        \  value: 'false'\n    service:\n      port: 8089\n  mcp:\n    enabled: false\n\
+        \  opamp-server:\n    enabled: false\n  payment:\n    enabled: false\n  product-catalog:\n\
+        \    enabled: false\n  quote:\n    enabled: false\n  recommendation:\n   \
+        \ enabled: false\n  shipping:\n    enabled: false\n  telemetry-docs:\n   \
+        \ enabled: false\n  valkey-cart:\n    enabled: false\ngrafana:\n  enabled:\
+        \ false\njaeger:\n  enabled: true\nopensearch:\n  enabled: false\nopentelemetry-collector:\n\
+        \  config:\n    exporters:\n      otlp_grpc/phoenix:\n        endpoint: phoenix-svc.phoenix.svc.cluster.local:4317\n\
+        \        headers:\n          Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJBcGlLZXk6MSJ9.-sAfgB07jS_4naVQqmfT4SrwSD1mW8YdzljlQprlPOg\n\
+        \        tls:\n          insecure: true\n    service:\n      pipelines:\n\
+        \        traces:\n          exporters:\n          - otlp_grpc/jaeger\n   \
+        \       - debug\n          - span_metrics\n          - otlp_grpc/phoenix\n\
+        prometheus:\n  enabled: false\n"
+    repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
+    targetRevision: 0.41.2
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
-      - ServerSideApply=true
+    - CreateNamespace=true
+    - ServerSideApply=true
