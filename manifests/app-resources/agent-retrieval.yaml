@@ -1,9 +1,12 @@
 apiVersion: kagent.dev/v1alpha2
-kind: Agent
+kind: SandboxAgent
 metadata:
   name: retrieval-agent-custom
   namespace: kagent
 spec:
+  substrate:
+    workerPoolRef:
+      name: kagent-default
   type: Declarative
   description: Ingests and retrieves data across a vector store and a graph.
   declarative:
@@ -39,7 +42,7 @@ spec:
       1. Call get-schema first. Reuse existing labels and relationship types;
          invent new ones only when nothing fits.
       2. Model the graph like this, and only like this:
-         - One node per object, labelled with its Kubernetes kind: Agent,
+         - One node per object, labelled with its Kubernetes kind: SandboxAgent,
            ModelConfig, MCPServer, RemoteMCPServer, HelmRelease, Gateway,
            HTTPRoute, and so on.
          - Key every node on a single `key` property, "<namespace>/<name>", and MERGE
@@ -122,17 +125,20 @@ spec:
     - type: Agent
       agent:
         apiGroup: kagent.dev
-        kind: Agent
+        kind: SandboxAgent
         name: k8s-agent
         namespace: kagent
 
 ---
 apiVersion: kagent.dev/v1alpha2
-kind: Agent
+kind: SandboxAgent
 metadata:
   name: retrieval-agent-official
   namespace: kagent
 spec:
+  substrate:
+    workerPoolRef:
+      name: kagent-default
   type: Declarative
   description: Ingests and retrieves data across a vector store and a graph.
   declarative:
@@ -168,7 +174,7 @@ spec:
       1. Call get-schema first. Reuse existing labels and relationship types;
          invent new ones only when nothing fits.
       2. Model the graph like this, and only like this:
-         - One node per object, labelled with its Kubernetes kind: Agent,
+         - One node per object, labelled with its Kubernetes kind: SandboxAgent,
            ModelConfig, MCPServer, RemoteMCPServer, HelmRelease, Gateway,
            HTTPRoute, and so on.
          - Key every node on a single `key` property, "<namespace>/<name>", and MERGE
@@ -251,6 +257,6 @@ spec:
     - type: Agent
       agent:
         apiGroup: kagent.dev
-        kind: Agent
+        kind: SandboxAgent
         name: k8s-agent
         namespace: kagent

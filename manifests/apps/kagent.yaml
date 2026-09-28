@@ -58,6 +58,8 @@ spec:
           enabled: false
         argo-rollouts-agent:
           enabled: false
+        k8s-agent:
+          enabled: false
         providers:
           default: gemini
           gemini:
