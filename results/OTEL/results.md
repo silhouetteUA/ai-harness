@@ -24,7 +24,10 @@ This document evaluates and compares three observability (o11y) solutions from t
 - **Findings:** Successfully received OTLP traces from `kagent` (Go ADK). We learned that capturing the actual conversational content requires strictly adhering to the latest OpenTelemetry conventions by configuring `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=SPAN_AND_EVENT` in the agent framework.
 
 ### MLflow
-*(To be completed)*
+*(Tested with `kagent` OTLP traces)*
+- **Pros:** A mature ecosystem that unifies trace logging with model registry and prompt engineering. If using native Python frameworks (like LangChain) or formatting traces in MLflow's proprietary schema, the UI is excellent.
+- **Cons:** Traces using the new bleeding-edge OpenTelemetry GenAI Semantic Conventions (like KAgent's Go ADK) are not currently rendered as a pretty "chat interface" natively. They appear as a raw span tree with complex attributes (`gen_ai.operation.name`, `gcp.vertex.agent.tool_call_args`).
+- **Findings:** Successfully routed `kagent` telemetry to MLflow via an intermediate OpenTelemetry Collector (which mapped `service.namespace` to a specific MLflow Experiment ID). However, as a first-time user analyzing agent execution, **Phoenix looks much better**. MLflow buries critical information (like tool inputs/outputs and prompts) deep inside the right-hand attributes sidebar, whereas Phoenix highlights them as primary UI elements.
 
 ### Standard OpenTelemetry (Jaeger/Zipkin)
 *(To be completed)*
