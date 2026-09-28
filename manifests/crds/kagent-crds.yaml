@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: ghcr.io/kagent-dev/kagent/helm
-    targetRevision: 0.10.1
+    targetRevision: 0.10.2
     chart: kagent-crds
   destination:
     server: https://kubernetes.default.svc
