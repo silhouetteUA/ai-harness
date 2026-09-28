@@ -27,7 +27,13 @@ This document evaluates and compares three observability (o11y) solutions from t
 *(Tested with `kagent` OTLP traces)*
 - **Pros:** A mature ecosystem that unifies trace logging with model registry and prompt engineering. If using native Python frameworks (like LangChain) or formatting traces in MLflow's proprietary schema, the UI is excellent.
 - **Cons:** Traces using the new bleeding-edge OpenTelemetry GenAI Semantic Conventions (like KAgent's Go ADK) are not currently rendered as a pretty "chat interface" natively. They appear as a raw span tree with complex attributes (`gen_ai.operation.name`, `gcp.vertex.agent.tool_call_args`).
-- **Findings:** Successfully routed `kagent` telemetry to MLflow via an intermediate OpenTelemetry Collector (which mapped `service.namespace` to a specific MLflow Experiment ID). However, as a first-time user analyzing agent execution, **Phoenix looks much better**. MLflow buries critical information (like tool inputs/outputs and prompts) deep inside the right-hand attributes sidebar, whereas Phoenix highlights them as primary UI elements.
+- **Findings:** Successfully routed `kagent` telemetry to MLflow via an intermediate OpenTelemetry Collector. However, as a first-time user analyzing agent execution, **Phoenix looks much better**. MLflow buries critical information deep inside the right-hand attributes sidebar rather than presenting a native chat UI. For example, tool executions just appear as raw tags:
+  ```json
+  "gen_ai.operation.name": "execute_tool"
+  "gen_ai.tool.name": "k8s_get_resources"
+  "gcp.vertex.agent.tool_call_args": {"all_namespaces":"true","resource_type":"modelconfigs"}
+  "gcp.vertex.agent.tool_response": {"output":"NAMESPACE NAME PROVIDER MODEL kagent default-model-config Gemini gemini-3.5-flash-lite"}
+  ```
 
 ### Standard OpenTelemetry (Jaeger/Zipkin)
 *(To be completed)*
