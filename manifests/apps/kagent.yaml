@@ -19,7 +19,8 @@ spec:
             enabled: true
             exporter:
               otlp:
-                endpoint: "http://phoenix-svc.phoenix.svc:4317"
+                # endpoint: "http://phoenix-svc.phoenix.svc:4317"
+                endpoint: "http://otel-collector.mlflow.svc:4317"
         env:
           - name: OTEL_EXPORTER_OTLP_HEADERS
             value: "Authorization=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJBcGlLZXk6MSJ9.-sAfgB07jS_4naVQqmfT4SrwSD1mW8YdzljlQprlPOg"
