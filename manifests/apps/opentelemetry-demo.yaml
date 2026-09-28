@@ -1,0 +1,57 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opentelemetry-demo
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
+    targetRevision: "0.41.2"
+    chart: opentelemetry-demo
+    helm:
+      values: |
+        components:
+          load-generator:
+            envOverrides:
+              - name: LOCUST_HEADLESS
+                value: "false"
+            service:
+              port: 8089
+        jaeger:
+          enabled: true
+        prometheus:
+          enabled: false
+        grafana:
+          enabled: false
+        opensearch:
+          enabled: false
+        opentelemetry-collector:
+          config:
+            exporters:
+              otlp_grpc/phoenix:
+                endpoint: phoenix-svc.phoenix.svc.cluster.local:4317
+                tls:
+                  insecure: true
+                headers:
+                  Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJBcGlLZXk6MSJ9.-sAfgB07jS_4naVQqmfT4SrwSD1mW8YdzljlQprlPOg"
+            service:
+              pipelines:
+                traces:
+                  exporters:
+                    - otlp_grpc/jaeger
+                    - debug
+                    - span_metrics
+                    - otlp_grpc/phoenix
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: otel-demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
