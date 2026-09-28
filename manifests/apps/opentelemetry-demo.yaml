@@ -28,12 +28,9 @@ spec:
         \ enabled: false\n  valkey-cart:\n    enabled: false\ngrafana:\n  enabled:\
         \ false\njaeger:\n  allInOne:\n    resources:\n      requests:\n        memory:\
         \ 100Mi\n  enabled: true\nopensearch:\n  enabled: false\nopentelemetry-collector:\n\
-        \  config:\n    exporters:\n      otlp_grpc/phoenix:\n        endpoint: phoenix-svc.phoenix.svc.cluster.local:4317\n\
-        \        headers:\n          Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJBcGlLZXk6MSJ9.-sAfgB07jS_4naVQqmfT4SrwSD1mW8YdzljlQprlPOg\n\
-        \        tls:\n          insecure: true\n    service:\n      pipelines:\n\
-        \        traces:\n          exporters:\n          - otlp_grpc/jaeger\n   \
-        \       - debug\n          - span_metrics\n          - otlp_grpc/phoenix\n\
-        prometheus:\n  enabled: false\n"
+        \  config:\n    exporters: {}\n    service:\n      pipelines:\n        traces:\n\
+        \          exporters:\n          - otlp_grpc/jaeger\n          - debug\n \
+        \         - span_metrics\nprometheus:\n  enabled: false\n"
     repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
     targetRevision: 0.41.2
   syncPolicy:
