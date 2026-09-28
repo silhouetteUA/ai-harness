@@ -24,6 +24,7 @@ spec:
             - serve_artifacts
           value_options:
             allowed-hosts: "mlflow-mlflow.mlflow.svc.cluster.local,mlflow-mlflow.mlflow.svc.cluster.local:*,localhost,localhost:*,127.0.0.1,127.0.0.1:*,mlflow.localhost,mlflow.localhost:*"
+            cors-allowed-origins: "http://mlflow.localhost:8081"
             workers: 2
         resources:
           requests:
