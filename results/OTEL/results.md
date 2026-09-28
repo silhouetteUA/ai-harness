@@ -18,13 +18,13 @@ This document evaluates and compares three observability (o11y) solutions from t
 ## Detailed Analysis
 
 ### Arize Phoenix
-*(Already completed during Task 2)*
+
 - **Pros:** Extremely fast to debug agent loops. The visual distinction between an agent's "thought process", its tool execution, and its LLM calls makes it uniquely suited for autonomous agents.
 - **Cons:** Strictly focused on LLMs. Might require running alongside a traditional OTel backend if you also need deep infrastructure metrics (CPU/RAM/Disk).
 - **Findings:** Successfully received OTLP traces from `kagent` (Go ADK). We learned that capturing the actual conversational content requires strictly adhering to the latest OpenTelemetry conventions by configuring `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=SPAN_AND_EVENT` in the agent framework.
 
 ### MLflow
-*(Tested with `kagent` OTLP traces)*
+
 - **Pros:** A mature ecosystem that unifies trace logging with model registry and prompt engineering. If using native Python frameworks (like LangChain) or formatting traces in MLflow's proprietary schema, the UI is excellent.
 - **Cons:** Traces using the new bleeding-edge OpenTelemetry GenAI Semantic Conventions (like KAgent's Go ADK) are not currently rendered as a pretty "chat interface" natively. They appear as a raw span tree with complex attributes (`gen_ai.operation.name`, `gcp.vertex.agent.tool_call_args`).
 - **Findings:** Successfully routed `kagent` telemetry to MLflow via an intermediate OpenTelemetry Collector. However, as a first-time user analyzing agent execution, **Phoenix looks much better**. MLflow buries critical information deep inside the right-hand attributes sidebar rather than presenting a native chat UI. For example, tool executions just appear as raw tags:
