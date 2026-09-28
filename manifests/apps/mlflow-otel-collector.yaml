@@ -30,7 +30,7 @@ spec:
           connectors:
             routing:
               table:
-                - statement: route() where resource.attributes["k8s.namespace.name"] == "kagent"
+                - statement: route() where resource.attributes["service.namespace"] == "kagent"
                   pipelines: [traces/kagent]
                 # Default bucket for anything else
                 - statement: route() where true
