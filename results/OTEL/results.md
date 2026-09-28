@@ -36,4 +36,11 @@ This document evaluates and compares three observability (o11y) solutions from t
   ```
 
 ### Standard OpenTelemetry (Jaeger/Zipkin)
-*(To be completed)*
+
+- **Pros:** Excellent for tracing requests across distributed architectures, tracking internal IPC/RPC calls between agent microservices, and debugging deep latency bottlenecks. Supported universally by every language and framework.
+- **Cons:** Generic visualization. It treats GenAI components (like LLMs, tools, and vector DBs) identically to standard HTTP or database calls, lacking a conversational interface.
+- **Findings:** Successfully deployed the OTel Demo stack and Jaeger backend to collect traces from `kagent`. The generic trace graph clearly demonstrated its strength in distributed microservice architectures—showing the flow from the `kagent-controller` API Gateway, across internal `a2a` endpoints, and into the `k8s-agent` worker.
+However, for GenAI-specific debugging, it proved very cumbersome:
+  - **Conversational Content is Buried:** Original prompts and final responses were extremely difficult to locate. We found the agent's internal clarifications buried inside a span called `execute_tool ask_user`, hidden in raw JSON text within the `gcp.vertex.agent.tool_call_args` attribute. 
+  - **No LLM Abstractions:** Because Jaeger does not natively understand GenAI semantics, you must click into individual spans and manually sift through massive walls of JSON attributes to reconstruct a chat.
+  - **Conclusion:** While Jaeger is incredibly powerful for tracking distributed agent-to-agent communication and system latency, it is not optimized for inspecting prompt quality or conversational flows, making purpose-built tools like Phoenix strictly superior for LLM observability.
