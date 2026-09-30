@@ -37,7 +37,7 @@ variable "git_repo_url" {
 variable "git_target_revision" {
   type        = string
   description = "The Git branch, tag, or commit to sync"
-  default     = "main"
+  default     = "agentgw-ai-aware"
 }
 
 variable "git_path" {

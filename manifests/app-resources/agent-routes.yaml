@@ -1,0 +1,29 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: retrieval-routes
+  namespace: agentgateway-system
+spec:
+  parentRefs:
+  - name: agentgateway-external
+    namespace: agentgateway-system
+  rules:
+  # Route 1: Custom implementation (uses qdrant-mcp-custom)
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /v1/retrieval/custom
+    backendRefs:
+    - name: kagent-controller
+      namespace: kagent
+      port: 8083
+
+  # Route 2: Official implementation (uses qdrant-mcp-official)
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /v1/retrieval/official
+    backendRefs:
+    - name: kagent-controller
+      namespace: kagent
+      port: 8083
