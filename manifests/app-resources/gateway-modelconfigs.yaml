@@ -5,7 +5,7 @@ metadata:
   namespace: kagent
 spec:
   provider: OpenAI
-  model: "gemini-1.5-flash"
+  model: "gemini-3.5-flash-lite"
   openAI:
     baseUrl: "http://agentgateway-external.agentgateway-system.svc.cluster.local/v1/retrieval/custom"
   apiKeyPassthrough: true
@@ -17,7 +17,7 @@ metadata:
   namespace: kagent
 spec:
   provider: OpenAI
-  model: "gemini-1.5-flash"
+  model: "gemini-3.5-flash-lite"
   openAI:
     baseUrl: "http://agentgateway-external.agentgateway-system.svc.cluster.local/v1/retrieval/official"
   apiKeyPassthrough: true
@@ -29,7 +29,7 @@ metadata:
   namespace: kagent
 spec:
   provider: OpenAI
-  model: "gemini-1.5-flash"
+  model: "gemini-3.5-flash-lite"
   openAI:
     baseUrl: "http://agentgateway-external.agentgateway-system.svc.cluster.local/v1/k8s"
   apiKeyPassthrough: true

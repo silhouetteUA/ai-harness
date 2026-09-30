@@ -12,7 +12,7 @@ spec:
     ai:
       defaults:
         - field: "model"
-          value: "gemini-1.5-flash"
+          value: "gemini-3.5-flash-lite"
 ---
 apiVersion: agentgateway.dev/v1alpha1
 kind: AgentgatewayPolicy
@@ -28,7 +28,7 @@ spec:
     ai:
       defaults:
         - field: "model"
-          value: "gemini-1.5-flash"
+          value: "gemini-3.5-flash-lite"
 ---
 apiVersion: agentgateway.dev/v1alpha1
 kind: AgentgatewayPolicy
@@ -44,4 +44,4 @@ spec:
     ai:
       defaults:
         - field: "model"
-          value: "gemini-1.5-flash"
+          value: "gemini-3.5-flash-lite"
