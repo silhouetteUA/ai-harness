@@ -11,3 +11,6 @@ spec:
     auth:
       secretRef:
         name: google-secret
+      location:
+        header:
+          name: x-goog-api-key
