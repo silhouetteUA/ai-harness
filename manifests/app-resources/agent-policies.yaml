@@ -42,3 +42,22 @@ spec:
         - "http://qdrant-mcp-official.kagent.svc.cluster.local"
         - "http://neo4j-mcp.kagent.svc.cluster.local"
         - "http://k8s-agent.kagent.svc.cluster.local"
+---
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayPolicy
+metadata:
+  name: policy-k8s-agent
+  namespace: agentgateway-system
+spec:
+  targetRefs:
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: k8s-agent-routes
+  backend:
+    ai:
+      defaults:
+        - field: "model"
+          value: "default-model-config"
+    mcp:
+      endpoints:
+        - "http://kagent-tool-server.kagent.svc.cluster.local"
