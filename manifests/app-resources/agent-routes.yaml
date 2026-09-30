@@ -8,25 +8,27 @@ spec:
   - name: agentgateway-external
     namespace: agentgateway-system
   rules:
-  # Route 1: Custom implementation (uses qdrant-mcp-custom)
+  # Route 1: Custom implementation
   - matches:
     - path:
         type: PathPrefix
         value: /v1/retrieval/custom
     backendRefs:
-    - name: kagent-controller
-      namespace: kagent
-      port: 8083
+    - name: gemini-backend
+      namespace: agentgateway-system
+      group: agentgateway.dev
+      kind: AgentgatewayBackend
 
-  # Route 2: Official implementation (uses qdrant-mcp-official)
+  # Route 2: Official implementation
   - matches:
     - path:
         type: PathPrefix
         value: /v1/retrieval/official
     backendRefs:
-    - name: kagent-controller
-      namespace: kagent
-      port: 8083
+    - name: gemini-backend
+      namespace: agentgateway-system
+      group: agentgateway.dev
+      kind: AgentgatewayBackend
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -43,6 +45,7 @@ spec:
         type: PathPrefix
         value: /v1/k8s
     backendRefs:
-    - name: kagent-controller
-      namespace: kagent
-      port: 8083
+    - name: gemini-backend
+      namespace: agentgateway-system
+      group: agentgateway.dev
+      kind: AgentgatewayBackend

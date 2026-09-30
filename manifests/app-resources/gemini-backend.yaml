@@ -1,0 +1,13 @@
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayBackend
+metadata:
+  name: gemini-backend
+  namespace: agentgateway-system
+spec:
+  ai:
+    provider:
+      gemini: {}
+  policies:
+    auth:
+      secretRef:
+        name: google-secret
