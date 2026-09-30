@@ -12,5 +12,5 @@ spec:
       secretRef:
         name: google-secret
       location:
-        header:
-          name: x-goog-api-key
+        queryParameter:
+          name: key
