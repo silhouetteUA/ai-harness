@@ -1,19 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kagent-crds
+  name: substrate-crds
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: ghcr.io/kagent-dev/kagent/helm
-    targetRevision: 0.10.2
-    chart: kagent-crds
+    repoURL: ghcr.io/kagent-dev/substrate/helm
+    targetRevision: 0.0.9
+    chart: substrate-crds
   destination:
     server: https://kubernetes.default.svc
-    namespace: kagent
+    namespace: ate-system
   syncPolicy:
     automated:
       prune: true

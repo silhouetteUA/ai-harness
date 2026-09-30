@@ -9,9 +9,13 @@
 | Component | Role |
 |---|---|
 | **agentgateway v1.5.0** | AI-aware API gateway (Gateway API–native, MCP-aware) |
-| **kagent 0.10.1** | Kubernetes-native AI agent framework |
-| **agentregistry** | Inventory and registry for AI agents |
+| **kagent 0.10.2** | Kubernetes-native AI agent framework |
+| **substrate 0.0.9** | AI substrate / execution runtime |
+| **agentregistry 0.5.16** | Inventory and registry for AI agents |
+| **llmd v0.3.17** | LLM model service |
+| **inferencepool v1.5.0** | Gateway API inference extension pool |
 | **Qdrant 1.19.1** | Vector database for retrieval |
+| **Neo4j 2026.7.1** | Graph database for knowledge graph and retrieval |
 | **Arize Phoenix 12.0.10** | LLM observability — tracing, evals, prompt playground |
 | **Argo CD** | GitOps operator — keeps the cluster in sync with definitions |
 | **KinD** | Local Kubernetes (1 control-plane) running v1.37.0 |
@@ -114,6 +118,8 @@ To enable tracing for your KAgent AI agents, you need to configure them to expor
      kubectl patch cm kagent-controller -n kagent -p '{"data": {"OTEL_EXPORTER_OTLP_HEADERS": "Authorization=Bearer <YOUR_GENERATED_TOKEN>", "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT": "true"}}'
      kubectl rollout restart deployment kagent-controller -n kagent
      ```
+
+> **Note:** Observability can be changed at any time to use a generic OTEL stack or MLflow. The manifests for these alternative stacks are located in the [`archive/`](./archive) directory (so they are not reconciled by Argo CD right now). You can swap them into your active manifests when needed.
 
 ## How it works
 
