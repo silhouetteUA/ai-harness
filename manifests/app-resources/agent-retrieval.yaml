@@ -1,3 +1,4 @@
+---
 apiVersion: kagent.dev/v1alpha2
 kind: SandboxAgent
 metadata:
@@ -10,10 +11,6 @@ spec:
   type: Declarative
   description: Ingests and retrieves data across a vector store and a graph.
   declarative:
-    # The ModelConfig the kagent chart creates, which every other agent here
-    # uses. It was gemini-gemini-2-5-flash, but that object was never shipped
-    # in releases/ -- it was created by hand and did not survive the cluster
-    # being rebuilt, leaving the agent stuck on ReconcileFailed.
     stream: true
     modelConfig: gateway-model-custom
     systemMessage: |
@@ -101,7 +98,30 @@ spec:
 
       Answer from what you retrieved, and say which store each fact came from.
       Never run write-cypher while answering a retrieval question.
-
+    tools:
+    - type: McpServer
+      mcpServer:
+        apiGroup: kagent.dev
+        kind: MCPServer
+        name: qdrant-mcp-custom
+        toolNames:
+        - vector_store
+        - vector_find
+    - type: McpServer
+      mcpServer:
+        apiGroup: kagent.dev
+        kind: MCPServer
+        name: neo4j-mcp
+        toolNames:
+        - get-schema
+        - read-cypher
+        - write-cypher
+    - type: Agent
+      agent:
+        apiGroup: kagent.dev
+        kind: SandboxAgent
+        name: k8s-agent
+        namespace: kagent
 ---
 apiVersion: kagent.dev/v1alpha2
 kind: SandboxAgent
@@ -115,10 +135,6 @@ spec:
   type: Declarative
   description: Ingests and retrieves data across a vector store and a graph.
   declarative:
-    # The ModelConfig the kagent chart creates, which every other agent here
-    # uses. It was gemini-gemini-2-5-flash, but that object was never shipped
-    # in releases/ -- it was created by hand and did not survive the cluster
-    # being rebuilt, leaving the agent stuck on ReconcileFailed.
     stream: true
     modelConfig: gateway-model-official
     systemMessage: |
@@ -206,3 +222,27 @@ spec:
 
       Answer from what you retrieved, and say which store each fact came from.
       Never run write-cypher while answering a retrieval question.
+    tools:
+    - type: McpServer
+      mcpServer:
+        apiGroup: kagent.dev
+        kind: MCPServer
+        name: qdrant-mcp-official
+        toolNames:
+        - qdrant-store
+        - qdrant-find
+    - type: McpServer
+      mcpServer:
+        apiGroup: kagent.dev
+        kind: MCPServer
+        name: neo4j-mcp
+        toolNames:
+        - get-schema
+        - read-cypher
+        - write-cypher
+    - type: Agent
+      agent:
+        apiGroup: kagent.dev
+        kind: SandboxAgent
+        name: k8s-agent
+        namespace: kagent
