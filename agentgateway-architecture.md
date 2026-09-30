@@ -31,8 +31,8 @@ flowchart TD
         K8sRoute["HTTPRoute<br>(k8s-agent-routes)"]:::gateway
         RetrievalRoute["HTTPRoute<br>(retrieval-routes)"]:::gateway
         
-        K8sPolicy["AgentgatewayPolicy<br>(policy-k8s-agent)<br>+ model: default-model-config<br>+ mcp: kagent-tool-server"]:::policy
-        RetrievalPolicy["AgentgatewayPolicy<br>(policy-retrieval-*)<br>+ model: default-model-config<br>+ mcp: qdrant / neo4j / k8s-agent"]:::policy
+        K8sPolicy["AgentgatewayPolicy<br>(policy-k8s-agent)<br>+ model: default-model-config"]:::policy
+        RetrievalPolicy["AgentgatewayPolicy<br>(policy-retrieval-*)<br>+ model: default-model-config"]:::policy
     end
 
     %% True Backend Configs
@@ -47,6 +47,9 @@ flowchart TD
     %% Connections
     K8sAgent -- "spec.declarative.modelConfig" --> GatewayModelK8s
     RetrievalAgent -- "spec.declarative.modelConfig" --> GatewayModelRetrieval
+    
+    K8sAgent -- "spec.declarative.tools" --> K8sToolServer
+    RetrievalAgent -- "spec.declarative.tools" --> RetrievalTools
 
     GatewayModelK8s -- "OpenAI Request" --> K8sRoute
     GatewayModelRetrieval -- "OpenAI Request" --> RetrievalRoute
@@ -59,15 +62,12 @@ flowchart TD
 
     Gateway -- "Resolves & Translates" --> DefaultModel
     Gateway -- "Gemini Request" --> GoogleAPI
-
-    Gateway -- "Proxy Tool Calls" --> K8sToolServer
-    Gateway -- "Proxy Tool Calls" --> RetrievalTools
-    Gateway -. "Delegate Tool Call" .-> K8sAgent
 ```
 
 ## How It Works
 
 1. **The Dummy Provider**: The `SandboxAgent` is configured to use a `ModelConfig` that acts like an OpenAI provider (e.g., `gateway-model-k8s`). 
 2. **The Route**: Instead of going to OpenAI, this config's `baseUrl` forces the traffic to hit a specific path on your cluster's `Agentgateway` (e.g., `/v1/k8s`).
-3. **The Policy Injection**: Once the request hits the matching `HTTPRoute`, the attached `AgentgatewayPolicy` intercepts the traffic. It dynamically injects the *real* model configuration (`default-model-config`) and the endpoints for the MCP tools.
-4. **The Translation**: The Gateway processes the OpenAI-formatted request, identifies that `default-model-config` uses Gemini, translates the payload into Google's format, and sends it out to the external Gemini API. It simultaneously manages connections to the internal MCP tool servers.
+3. **The Policy Injection**: Once the request hits the matching `HTTPRoute`, the attached `AgentgatewayPolicy` intercepts the traffic. It dynamically injects the *real* model configuration (`default-model-config`).
+4. **The Translation**: The Gateway processes the OpenAI-formatted request, identifies that `default-model-config` uses Gemini, translates the payload into Google's format, and sends it out to the external Gemini API.
+5. **Tool Execution**: Tool execution remains natively bound to the `SandboxAgent` through its `spec.declarative.tools` array, allowing the Agent runtime to securely execute LLM tool calls against internal MCP servers.

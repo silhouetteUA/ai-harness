@@ -138,6 +138,14 @@ We use a strictly sequenced **App of Apps** pattern. OpenTofu provisions the thr
 2. **Applications** are installed next.
 3. **Raw Custom Resources** (Gateways, HTTPRoutes) are installed last since they rely on the CRDs being present.
 
+## Agentgateway Decoupled Architecture
+
+This repository uses a decoupled agent routing pattern. To inspect exactly how it works, see the [Architecture Diagram](./agentgateway-architecture.md).
+
+- **Model Abstraction**: Rather than hardcoding LLM configuration into the `SandboxAgent` manifests, agents refer to an `OpenAI` provider `ModelConfig` that points to the local `Agentgateway` instance (`baseUrl: http://agentgateway-external...`). 
+- **Dynamic Translation**: The `AgentgatewayPolicy` on the Gateway routes injects the true model (e.g., Gemini) on the backend. The Gateway receives OpenAI traffic from the agent, seamlessly translates it to Gemini API calls, and handles the request lifecycle.
+- **Native Tools**: MCP tool definitions are configured directly on the `SandboxAgent` under its `spec.declarative.tools` array. This keeps the execution of tool logic native to the Agent runtime itself.
+
 ## Directory layout
 
 | Path | Purpose |
