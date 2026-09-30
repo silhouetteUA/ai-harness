@@ -36,21 +36,21 @@ kubectl get pods -A                     # verify all components are running
 
 ## 2. Setting the API Key
 
-Because the cluster is configured to use Gemini via GitOps, the `default-model-config` will look for a Kubernetes Secret containing your API key. If this secret is missing, your agents will be in an unavailable state.
+Because the cluster is configured to route all LLM traffic through Agentgateway, the gateway must be securely authenticated with Google AI Studio. 
 
-Run the following command to populate the secret (replace `YOUR_API_KEY` with your actual Google AI Studio key, or use an environment variable):
+Run the following command to create the `google-secret` (replace `YOUR_API_KEY` with your actual Google AI Studio key):
 
 ```bash
-kubectl create secret generic kagent-gemini \
-  --namespace kagent \
+kubectl create secret generic google-secret \
+  --namespace agentgateway-system \
   --from-literal=GOOGLE_API_KEY="YOUR_API_KEY"
 ```
 
-Alternatively, if you have your key saved in a local `.env` file as `GEMINI_API_KEY`, you can run this command. It uses a subshell `()` to securely pull the key without permanently exposing it in your terminal environment:
+Alternatively, if you have your key saved in a local `.env` file as `GOOGLE_API_KEY`, you can run this command. It uses a subshell `()` to securely pull the key without permanently exposing it in your terminal environment:
 
 ```bash
-(set -a; source .env; kubectl create secret generic kagent-gemini \
-  --namespace kagent \
+(set -a; source .env; kubectl create secret generic google-secret \
+  --namespace agentgateway-system \
   --from-literal=GOOGLE_API_KEY="$GOOGLE_API_KEY")
 ```
 
@@ -143,7 +143,7 @@ We use a strictly sequenced **App of Apps** pattern. OpenTofu provisions the thr
 This repository uses a decoupled agent routing pattern. To inspect exactly how it works, see the [Architecture Diagram](./agentgateway-architecture.md).
 
 - **Model Abstraction**: Rather than hardcoding LLM configuration into the `SandboxAgent` manifests, agents refer to an `OpenAI` provider `ModelConfig` that points to the local `Agentgateway` instance (`baseUrl: http://agentgateway-external...`). 
-- **Dynamic Translation**: The `AgentgatewayPolicy` on the Gateway routes injects the true model (e.g., Gemini) on the backend. The Gateway receives OpenAI traffic from the agent, seamlessly translates it to Gemini API calls, and handles the request lifecycle.
+- **Dynamic Translation**: The `AgentgatewayPolicy` on the Gateway routes injects the exact model name (`gemini-3.5-flash-lite`) into the request. The Gateway receives OpenAI traffic from the agent, seamlessly translates it to Gemini API calls, authenticates securely via the `AgentgatewayBackend` using your stored API key, and proxies the request to Google.
 - **Native Tools**: MCP tool definitions are configured directly on the `SandboxAgent` under its `spec.declarative.tools` array. This keeps the execution of tool logic native to the Agent runtime itself.
 
 ## Directory layout
