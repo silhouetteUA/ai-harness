@@ -15,7 +15,7 @@ spec:
     # in releases/ -- it was created by hand and did not survive the cluster
     # being rebuilt, leaving the agent stuck on ReconcileFailed.
     stream: true
-    baseUrl: "http://agentgateway-external.agentgateway-system.svc.cluster.local/v1/retrieval/custom"
+    modelConfig: gateway-model-custom
     systemMessage: |
       You are a data agent over two stores in this cluster. Which products
       back them is not your concern and can change; the tools are the contract.
@@ -120,7 +120,7 @@ spec:
     # in releases/ -- it was created by hand and did not survive the cluster
     # being rebuilt, leaving the agent stuck on ReconcileFailed.
     stream: true
-    baseUrl: "http://agentgateway-external.agentgateway-system.svc.cluster.local/v1/retrieval/official"
+    modelConfig: gateway-model-official
     systemMessage: |
       You are a data agent over two stores in this cluster. Which products
       back them is not your concern and can change; the tools are the contract.

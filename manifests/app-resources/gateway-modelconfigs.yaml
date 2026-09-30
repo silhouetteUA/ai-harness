@@ -1,0 +1,35 @@
+apiVersion: kagent.dev/v1alpha2
+kind: ModelConfig
+metadata:
+  name: gateway-model-custom
+  namespace: kagent
+spec:
+  provider: OpenAI
+  model: "default-model-config"
+  openAI:
+    baseUrl: "http://agentgateway-external.agentgateway-system.svc.cluster.local/v1/retrieval/custom"
+  apiKeyPassthrough: true
+---
+apiVersion: kagent.dev/v1alpha2
+kind: ModelConfig
+metadata:
+  name: gateway-model-official
+  namespace: kagent
+spec:
+  provider: OpenAI
+  model: "default-model-config"
+  openAI:
+    baseUrl: "http://agentgateway-external.agentgateway-system.svc.cluster.local/v1/retrieval/official"
+  apiKeyPassthrough: true
+---
+apiVersion: kagent.dev/v1alpha2
+kind: ModelConfig
+metadata:
+  name: gateway-model-k8s
+  namespace: kagent
+spec:
+  provider: OpenAI
+  model: "default-model-config"
+  openAI:
+    baseUrl: "http://agentgateway-external.agentgateway-system.svc.cluster.local/v1/k8s"
+  apiKeyPassthrough: true
